@@ -38,6 +38,7 @@ async def client(session_wrapper,settings_wrapper) -> AsyncClient:
         yield c
 
 
+
 async def test_create_user(client):
     user_data = UserWithPassword(username="test", email="test", password="test")
     response = await client.post(
