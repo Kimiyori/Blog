@@ -1,0 +1,11 @@
+services:
+  test_backend:
+    build: ./backend
+    command: python -m  pytest tests
+    working_dir: /backend
+    depends_on:
+      - mongodb
+  lint_backend:
+    build: ./backend
+    command: bash -c "mypy src ; pylint src ; flake8 src"
+    working_dir: /backend

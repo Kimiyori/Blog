@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  backend-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run backend linter
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > backend/.env
+          docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --exit-code-from lint_backend lint_backend
+  backend-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run backend tests
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > backend/.env
+          docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --exit-code-from test_backend test_backend

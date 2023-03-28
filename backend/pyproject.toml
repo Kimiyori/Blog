@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "backend"
+version = "0.1.0"
+description = ""
+authors = ["'Kimiyori' <'maksimkalin17@gmail.com'>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.94.1"
+uvicorn = {extras = ["standart"], version = "^0.21.1"}
+environs = "^9.5.0"
+alembic = "^1.10.2"
+pydantic = "^1.10.6"
+python-multipart = "^0.0.6"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+asyncpg = "^0.27.0"
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.7"}
+httpx = "^0.23.3"
+
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.2.2"
+pytest-asyncio = "^0.21.0"
+
+
+[tool.poetry.group.lint.dependencies]
+mypy = "^1.1.1"
+flake8 = "^6.0.0"
+pylint = "^2.17.0"
+black = "^23.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
