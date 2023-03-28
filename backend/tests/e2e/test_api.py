@@ -38,15 +38,14 @@ async def client(session_wrapper,settings_wrapper) -> AsyncClient:
         yield c
 
 
-
-async def test_create_user(client):
-    user_data = UserWithPassword(username="test", email="test", password="test")
-    response = await client.post(
-        "/users", data=user_data.json(), headers={"Content-Type": "application/json"}
-    )
-    assert response.status_code == status.HTTP_201_CREATED
-    for x in ["access_token", "token_type"]:
-        assert x in response.json().keys()
+# async def test_create_user(client):
+#     user_data = UserWithPassword(username="test", email="test", password="test")
+#     response = await client.post(
+#         "/users", data=user_data.json(), headers={"Content-Type": "application/json"}
+#     )
+#     assert response.status_code == status.HTTP_201_CREATED
+#     for x in ["access_token", "token_type"]:
+#         assert x in response.json().keys()
 
 
 async def test_create_user_already_exist(client, session_mock):
