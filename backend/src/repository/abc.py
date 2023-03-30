@@ -31,10 +31,19 @@ class MongoDbRepository(AbstractRepository[T]):
         self.collection: AsyncIOMotorCollection
 
     async def add(self, entity: dict[str, Any]) -> ObjectId:
-        inserted = await self.collection.insert_one(entity)
+        inserted = await self.collection.insert_one(entity, session=self.session)
         id: ObjectId = inserted.inserted_id
         return id
 
     async def count(self, entity: dict[str, Any]) -> int:
         count: int = await self.collection.count_documents(entity, session=self.session)
         return count
+
+    async def get_by_id(self, id: ObjectId) -> dict[str, str | int] | None:
+        object: dict[str, str | int] | None = await self.collection.find_one(
+            {"_id": id}, session=self.session
+        )
+        return object
+
+    async def delete(self, id: ObjectId) -> None:
+        await self.collection.delete_one({"_id": id}, session=self.session)

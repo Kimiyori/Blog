@@ -12,12 +12,12 @@ from src.service.user import (
     ALGORITHM,
 )
 from jose import jwt
-from src.db.schemas.user import UserWithPassword
+from src.db.schemas.user import UserIn
 from src.repository.abc import AbstractRepository, T
 from src.unit_of_work import AbstractUnitOfWork
 
 
-USER = UserWithPassword(username="test", email="text", password="test")
+USER = UserIn(username="test", email="text", password="test")
 
 
 class FakeRepository(AbstractRepository[T]):
@@ -36,7 +36,7 @@ class FakeRepository(AbstractRepository[T]):
 
     async def get_by_name(self, name):
         if (user := self.get(name)) is not None:
-            return UserWithPassword(**user)
+            return user
 
     async def get_by_id(self, id):
         return self.session[id]

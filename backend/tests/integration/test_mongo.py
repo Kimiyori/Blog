@@ -1,9 +1,9 @@
-from src.db.schemas.user import UserWithPassword
+from src.db.schemas.user import UserIn
 from src.service.user import get_password_hash
 from tests.conftest import session_mock,mock_settings
 import pytest
 
-USERS=[UserWithPassword(username=user,
+USERS=[UserIn(username=user,
                         email=f'{user}@mail.ru',
                         password=get_password_hash(user)) for user in ['test1','test2','test3']]
 

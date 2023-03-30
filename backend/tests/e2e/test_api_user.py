@@ -1,65 +1,37 @@
 from datetime import datetime, timedelta
+from unittest import mock
 import pytest_asyncio
 import pytest
 from fastapi import status
-from src.db.base import async_mongo_session
 from src.service.user import ALGORITHM, SECRET_KEY
 from src.service.user import ACCESS_TOKEN_EXPIRE_MINUTES
 from src.service.user import get_password_hash
-from httpx import AsyncClient
-from src.db.schemas.user import UserWithPassword
-from src.main import create_app
-from tests.conftest import session_mock, mock_settings
-from src.config import get_settings
-from jose import jwt, JWTError
+from src.db.schemas.user import UserIn
+from tests.conftest import session_mock, mock_settings, client_app,lifespan
+from jose import jwt
 
-
-@pytest_asyncio.fixture()
-async def session_wrapper(session_mock):
-    async def wrapper():
-        return session_mock
-
-    return wrapper
-
-@pytest_asyncio.fixture()
-async def settings_wrapper(mock_settings):
-    async def wrapper():
-        return mock_settings
-
-    return wrapper
-
-@pytest.fixture
-@pytest.mark.anyio
-async def client(session_wrapper,settings_wrapper) -> AsyncClient:
-    app = create_app()
-    app.dependency_overrides[get_settings] = settings_wrapper
-    app.dependency_overrides[async_mongo_session] = session_wrapper
-    async with AsyncClient(app=app, base_url="http://test") as c:
-        yield c
-
-
-async def test_create_user_already_exist(client, session_mock):
-    user_data = UserWithPassword(username="test", email="test", password="test")
+async def test_create_user_already_exist(client_app, session_mock):
+    user_data = UserIn(username="test", email="test", password="test")
     await session_mock[0].test.users.insert_one(
         dict(user_data),
         session=session_mock[1],
     )
-    response = await client.post(
+    response = await client_app.post(
         "/users", data=user_data.json(), headers={"Content-Type": "application/json"}
     )
     assert response.status_code == status.HTTP_409_CONFLICT
 
 
-async def test_create_user(client):
-    user_data = UserWithPassword(username="test", email="test", password="test")
-    response = await client.post(
+async def test_create_user(client_app):
+    user_data = UserIn(username="test", email="test", password="test")
+    response = await client_app.post(
         "/users", data=user_data.json(), headers={"Content-Type": "application/json"}
     )
     assert response.status_code == status.HTTP_201_CREATED
     for x in ["access_token", "token_type"]:
         assert x in response.json().keys()
         
-async def test_get_token(client, session_mock):
+async def test_get_token(client_app, session_mock):
     await session_mock[0].test.users.insert_one(
         {
             "username": "test",
@@ -68,7 +40,7 @@ async def test_get_token(client, session_mock):
         },
         session=session_mock[1],
     )
-    response = await client.post(
+    response = await client_app.post(
         "/users/token",
         data={"username": "test", "password": "test"},
         headers={"content-type": "application/x-www-form-urlencoded"},
@@ -78,8 +50,8 @@ async def test_get_token(client, session_mock):
     assert response.json()["token_type"] == "bearer"
 
 
-async def test_get_token_user_not_exist(client):
-    response = await client.post(
+async def test_get_token_user_not_exist(client_app):
+    response = await client_app.post(
         "/users/token",
         data={"username": "test", "password": "test"},
         headers={"content-type": "application/x-www-form-urlencoded"},
@@ -88,7 +60,7 @@ async def test_get_token_user_not_exist(client):
     assert response.json() == {"detail": "Incorrect username or password"}
 
 
-async def test_get_token_wrong_password(client, session_mock):
+async def test_get_token_wrong_password(client_app, session_mock):
     await session_mock[0].test.users.insert_one(
         {
             "username": "test",
@@ -97,7 +69,7 @@ async def test_get_token_wrong_password(client, session_mock):
         },
         session=session_mock[1],
     )
-    response = await client.post(
+    response = await client_app.post(
         "/users/token",
         data={"username": "test", "password": "wrong_test"},
         headers={"content-type": "application/x-www-form-urlencoded"},
@@ -106,7 +78,7 @@ async def test_get_token_wrong_password(client, session_mock):
     assert response.json() == {"detail": "Incorrect username or password"}
 
 
-async def test_get_me(client, session_mock):
+async def test_get_me(client_app, session_mock):
     await session_mock[0].test.users.insert_one(
         {
             "username": "test",
@@ -123,7 +95,7 @@ async def test_get_me(client, session_mock):
         SECRET_KEY,
         algorithm=ALGORITHM,
     )
-    response = await client.get(
+    response = await client_app.get(
         "/users/me",
         headers={
             "content-type": "application/x-www-form-urlencoded",
@@ -131,10 +103,11 @@ async def test_get_me(client, session_mock):
         },
     )
     assert response.status_code == status.HTTP_200_OK
-    assert response.json() == {"email": "test@mial.ru", "username": "test"}
+    assert response.json()['username'] == "test"
+    assert response.json()['email'] =="test@mial.ru"
 
 
-async def test_get_me_not_username(client, session_mock):
+async def test_get_me_not_username(client_app, session_mock):
     await session_mock[0].test.users.insert_one(
         {
             "username": "test",
@@ -150,7 +123,7 @@ async def test_get_me_not_username(client, session_mock):
         SECRET_KEY,
         algorithm=ALGORITHM,
     )
-    response = await client.get(
+    response = await client_app.get(
         "/users/me",
         headers={
             "content-type": "application/x-www-form-urlencoded",
@@ -161,7 +134,7 @@ async def test_get_me_not_username(client, session_mock):
     assert response.json() == {"detail": "Could not validate credentials"}
 
 
-async def test_get_me_jwt_error(client, session_mock):
+async def test_get_me_jwt_error(client_app, session_mock):
     await session_mock[0].test.users.insert_one(
         {
             "username": "test",
@@ -170,7 +143,7 @@ async def test_get_me_jwt_error(client, session_mock):
         },
         session=session_mock[1],
     )
-    response = await client.get(
+    response = await client_app.get(
         "/users/me",
         headers={
             "content-type": "application/x-www-form-urlencoded",
@@ -181,7 +154,7 @@ async def test_get_me_jwt_error(client, session_mock):
     assert response.json() == {"detail": "Could not validate credentials"}
 
 
-async def test_get_me_user_not_exist(client):
+async def test_get_me_user_not_exist(client_app):
     token = jwt.encode(
         {
             "sub": "test",
@@ -190,7 +163,7 @@ async def test_get_me_user_not_exist(client):
         SECRET_KEY,
         algorithm=ALGORITHM,
     )
-    response = await client.get(
+    response = await client_app.get(
         "/users/me",
         headers={
             "content-type": "application/x-www-form-urlencoded",

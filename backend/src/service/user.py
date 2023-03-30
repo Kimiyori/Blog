@@ -2,7 +2,7 @@ from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from src.db.schemas.user import UserBase, UserWithPassword
+from src.db.schemas.user import UserOut, UserIn
 from src.unit_of_work import uow_context_manager, MongoDBUnitOfWork
 from src.repository.user import UserRepository
 from passlib.context import CryptContext
@@ -38,11 +38,11 @@ def create_access_token(
 
 
 async def create_new_user(
-    user_data: UserWithPassword,
+    user_data: UserIn,
     uow: MongoDBUnitOfWork[UserRepository] = Depends(
         uow_context_manager(UserRepository)
     ),
-) -> UserBase:
+) -> UserOut:
     query = [
         {field: data}
         for field in ["username", "email"]
@@ -53,10 +53,11 @@ async def create_new_user(
             status_code=status.HTTP_409_CONFLICT, detail="user or email already exist"
         )
     user_data.password = get_password_hash(user_data.password)
-    created_id = await uow.repo.add(dict(user_data))
+    created_id = await uow.repo.add(user_data.dict())
     await uow.commit()
-    assert (new_user := await uow.repo.get_by_id(created_id))
-    return new_user
+    if (new_user := await uow.repo.get_by_id(created_id)) is not None:
+        return UserOut(**new_user)
+    return None
 
 
 async def authenticate_user(
@@ -64,12 +65,12 @@ async def authenticate_user(
     uow: MongoDBUnitOfWork[UserRepository] = Depends(
         uow_context_manager(UserRepository)
     ),
-) -> UserWithPassword | bool:
+) -> UserIn | bool:
     if (user := await uow.repo.get_by_name(form_data.username)) is None:
         return False
-    if not verify_password(form_data.password, user.password):
+    if not verify_password(form_data.password, user["password"]):
         return False
-    return user
+    return UserIn(**user)
 
 
 async def get_current_user(
@@ -77,7 +78,7 @@ async def get_current_user(
     uow: MongoDBUnitOfWork[UserRepository] = Depends(
         uow_context_manager(UserRepository)
     ),
-) -> UserWithPassword:
+) -> UserOut:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -91,4 +92,4 @@ async def get_current_user(
         raise credentials_exception
     if (user := await uow.repo.get_by_name(username)) is None:
         raise credentials_exception
-    return user
+    return UserOut(**user)

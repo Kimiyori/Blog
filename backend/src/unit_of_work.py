@@ -2,8 +2,8 @@ import abc
 from typing import Any, AsyncGenerator, Callable, Generic, TypeVar
 from pymongo.errors import OperationFailure, ConnectionFailure
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorClientSession
-from fastapi import Depends
-from src.config import get_settings, Settings
+from fastapi import Depends, Request
+from src.config import Settings
 from src.db.base import async_mongo_session
 
 UowT = TypeVar("UowT")
@@ -39,14 +39,15 @@ class MongoDBUnitOfWork(AbstractUnitOfWork[UowT]):
 
     def __init__(
         self,
+        request: Request,
         client: tuple[AsyncIOMotorClient, AsyncIOMotorClientSession] = Depends(
             async_mongo_session
         ),
-        settings: Settings = Depends(get_settings),
     ) -> None:
         super().__init__(client[1])
+
         self.client = client[0]
-        self.settings = settings
+        self.settings: Settings = request.app.mongo_settings
 
     def __call__(self, repo: Callable[..., UowT]) -> AbstractUnitOfWork[UowT]:
         self.repo = repo(self.client, self.session, self.settings.MONGODB_DATABASE)

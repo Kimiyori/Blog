@@ -1,9 +1,9 @@
 import pytest
-from src.db.schemas.user import UserWithPassword
+from src.db.schemas.user import UserIn
 from src.repository.user import UserRepository
 from tests.conftest import session_mock, mock_settings
 
-USER = UserWithPassword(
+USER = UserIn(
     username="test", email="test@mial.ru", password="test_hash_pass"
 )
 
@@ -17,22 +17,22 @@ async def repo(session_mock, mock_settings):
 
 @pytest.fixture
 async def repo_with_user(repo):
-    USER = UserWithPassword(
+    USER = UserIn(
         username="test", email="test@mial.ru", password="test_hash_pass"
     )
-    id = await repo.add(dict(USER))
+    id = await repo.add(USER.dict())
     await repo.session.commit_transaction()
     return repo, id
 
 
 async def test_repository_can_get_by_name(repo_with_user):
     get_result = await repo_with_user[0].get_by_name(USER.username)
-    assert get_result.username == USER.username
+    assert get_result["username"] == USER.username
 
 
 async def test_repository_can_get_by_id(repo_with_user):
     get_result = await repo_with_user[0].get_by_id(repo_with_user[1])
-    assert get_result.username == USER.username
+    assert get_result["username"] == USER.username
 
 
 async def test_repository_can_count(repo_with_user):

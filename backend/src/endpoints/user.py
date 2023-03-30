@@ -7,7 +7,7 @@ from src.service.user import (
     authenticate_user,
     get_current_user,
 )
-from src.db.schemas.user import Token, UserBase
+from src.db.schemas.user import Token, UserIn, UserOut
 
 router = APIRouter(
     prefix="/users",
@@ -16,7 +16,7 @@ router = APIRouter(
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)
-async def create_user(user: UserBase = Depends(create_new_user)) -> Token:
+async def create_user(user: UserIn = Depends(create_new_user)) -> Token:
     access_token = create_access_token(
         data={"sub": user.username},
         expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
@@ -25,7 +25,7 @@ async def create_user(user: UserBase = Depends(create_new_user)) -> Token:
 
 
 @router.post("/token", response_model=Token)
-async def get_user_token(user: UserBase = Depends(authenticate_user)) -> Token:
+async def get_user_token(user: UserIn = Depends(authenticate_user)) -> Token:
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -40,7 +40,7 @@ async def get_user_token(user: UserBase = Depends(authenticate_user)) -> Token:
 
 
 @router.get(
-    "/me", summary="Get details of currently logged in user", response_model=UserBase
+    "/me", summary="Get details of currently logged in user", response_model=UserOut
 )
-async def read_users_me(current_user: UserBase = Depends(get_current_user)) -> UserBase:
+async def read_users_me(current_user: UserOut = Depends(get_current_user)) -> UserOut:
     return current_user
