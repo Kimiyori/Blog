@@ -7,8 +7,9 @@ from src.service.user import ALGORITHM, SECRET_KEY
 from src.service.user import ACCESS_TOKEN_EXPIRE_MINUTES
 from src.service.user import get_password_hash
 from src.db.schemas.user import UserIn
-from tests.conftest import session_mock, mock_settings, client_app,lifespan
+from tests.conftest import session_mock, mock_settings, client_app, lifespan
 from jose import jwt
+
 
 async def test_create_user_already_exist(client_app, session_mock):
     user_data = UserIn(username="test", email="test", password="test")
@@ -30,7 +31,8 @@ async def test_create_user(client_app):
     assert response.status_code == status.HTTP_201_CREATED
     for x in ["access_token", "token_type"]:
         assert x in response.json().keys()
-        
+
+
 async def test_get_token(client_app, session_mock):
     await session_mock[0].test.users.insert_one(
         {
@@ -103,8 +105,8 @@ async def test_get_me(client_app, session_mock):
         },
     )
     assert response.status_code == status.HTTP_200_OK
-    assert response.json()['username'] == "test"
-    assert response.json()['email'] =="test@mial.ru"
+    assert response.json()["username"] == "test"
+    assert response.json()["email"] == "test@mial.ru"
 
 
 async def test_get_me_not_username(client_app, session_mock):

@@ -1,12 +1,15 @@
 import pytest
 from src.repository.abc import MongoDbRepository
 from src.unit_of_work import MongoDBUnitOfWork
-from tests.conftest import session_mock, mock_settings,mock_request
+from tests.conftest import session_mock, mock_settings, mock_request
 from tests.integration.test_mongo import insert_users
+
 
 @pytest.fixture
 async def uow_object(session_mock, mock_request):
-    return MongoDBUnitOfWork(mock_request,session_mock)
+    return MongoDBUnitOfWork(mock_request, session_mock)
+
+
 @pytest.fixture
 async def uow_factory(uow_object):
     async with uow_object(MongoDbRepository) as uow_session:

@@ -41,7 +41,7 @@ class MongoDbRepository(AbstractRepository[T]):
 
     async def get_by_id(self, id: ObjectId) -> dict[str, str | int] | None:
         object: dict[str, str | int] | None = await self.collection.find_one(
-            {"_id": id}, session=self.session
+            {"_id": ObjectId(id)}, session=self.session
         )
         return object
 

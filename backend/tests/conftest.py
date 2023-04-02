@@ -68,27 +68,27 @@ async def session_wrapper(session_mock):
 
 
 @pytest_asyncio.fixture(scope="session")
-async def lifespan(mock_settings,client):
+async def lifespan(mock_settings, client):
     @asynccontextmanager
     async def wrapper(app):
         app.mongo_settings = mock_settings
         app.mongo_client = client
         yield
 
-
     return wrapper
 
 
 @pytest.fixture
-async def client_app(session_wrapper,lifespan) -> AsyncClient:
+async def client_app(session_wrapper, lifespan) -> AsyncClient:
     app = create_app(lifespan)
     app.dependency_overrides[async_mongo_session] = session_wrapper
     async with LifespanManager(app):
         async with AsyncClient(app=app, base_url="http://test") as c:
             yield c
 
+
 @pytest.fixture
 def mock_request(mock_settings):
     m = mock.Mock()
-    m.app.mongo_settings=mock_settings
+    m.app.mongo_settings = mock_settings
     return m
