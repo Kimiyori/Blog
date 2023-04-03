@@ -1,4 +1,5 @@
 from datetime import timedelta, datetime
+from bson import ObjectId
 from fastapi import HTTPException
 import pytest
 from typing import Any
@@ -119,6 +120,7 @@ async def test_auth_user(uow):
 async def test_get_current_user(uow):
     await uow.repo.add(
         {
+            "_id": ObjectId(),
             "username": USER.username,
             "email": USER.email,
             "password": get_password_hash(USER.password),

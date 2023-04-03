@@ -6,15 +6,12 @@ class UserBase(BaseModel):
     username: str
     email: str | None = None
 
-    class Config:
-        orm_mode = True
-
 
 class UserIn(UserBase):
     password: str
 
 
-class UserOut(UserBase, MongoBaseModel):
+class UserOut(MongoBaseModel, UserBase):
     ...
 
 

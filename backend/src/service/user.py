@@ -55,9 +55,9 @@ async def create_new_user(
     user_data.password = get_password_hash(user_data.password)
     created_id = await uow.repo.add(user_data.dict())
     await uow.commit()
-    if (new_user := await uow.repo.get_by_id(created_id)) is not None:
-        return UserOut(**new_user)
-    return None
+    new_user = await uow.repo.get_by_id(created_id)
+    assert new_user
+    return UserOut(**new_user)
 
 
 async def authenticate_user(
@@ -70,7 +70,9 @@ async def authenticate_user(
         return False
     if not verify_password(form_data.password, user["password"]):
         return False
-    return UserIn(**user)
+    return UserIn(
+        username=user["username"], password=user["password"], email=user["email"]
+    )
 
 
 async def get_current_user(
@@ -92,4 +94,4 @@ async def get_current_user(
         raise credentials_exception
     if (user := await uow.repo.get_by_name(username)) is None:
         raise credentials_exception
-    return UserOut(**user)
+    return UserOut(username=user["username"], _id=user["_id"], email=user["email"])

@@ -17,7 +17,11 @@ async def create_post_service(
     post_create = PostCreate(**post_data.dict(), user_id=user.id)
     post_id = await uow.repo.add(post_create.dict())
     await uow.commit()
-    post = await uow.repo.get_by_id(post_id)
+    if (post := await uow.repo.get_by_id(post_id)) is None:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Something went wrong. Pleasy try Again",
+        )
     return PostOut(**post)
 
 

@@ -39,8 +39,8 @@ class MongoDbRepository(AbstractRepository[T]):
         count: int = await self.collection.count_documents(entity, session=self.session)
         return count
 
-    async def get_by_id(self, id: ObjectId) -> dict[str, str | int] | None:
-        object: dict[str, str | int] | None = await self.collection.find_one(
+    async def get_by_id(self, id: ObjectId | str) -> dict[str, Any] | None:
+        object: dict[str, str | int | ObjectId] | None = await self.collection.find_one(
             {"_id": ObjectId(id)}, session=self.session
         )
         return object

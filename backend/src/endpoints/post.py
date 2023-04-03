@@ -5,7 +5,7 @@ from src.service.post import (
     delete_post_service,
     update_post_service,
 )
-from src.db.schemas.post import PostIn, PostOut
+from src.db.schemas.post import PostOut
 
 router = APIRouter(
     prefix="/post",
@@ -14,7 +14,7 @@ router = APIRouter(
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)
-async def create_post(post: PostIn = Depends(create_post_service)) -> PostOut:
+async def create_post(post: PostOut = Depends(create_post_service)) -> PostOut:
     return post
 
 

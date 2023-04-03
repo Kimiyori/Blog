@@ -1,6 +1,6 @@
 from typing import AsyncIterator
-from fastapi import FastAPI
 from contextlib import asynccontextmanager
+from fastapi import FastAPI
 from motor.motor_asyncio import AsyncIOMotorClient
 from src.config import get_settings
 from src.endpoints import user, post
@@ -14,8 +14,8 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     app.mongo_client.close()  # type:ignore
 
 
-def create_app(lifespan=lifespan) -> FastAPI:  # type:ignore
-    app = FastAPI(lifespan=lifespan)
+def create_app(lifespan_func=lifespan) -> FastAPI:  # type:ignore
+    app = FastAPI(lifespan=lifespan_func)
     app.include_router(user.router)
     app.include_router(post.router)
     return app
