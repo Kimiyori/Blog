@@ -72,6 +72,7 @@ class PostCreate(PostBase):
 class PostOut(MongoBaseModel, PostBase):
     created_at: datetime
     updated_at: datetime
+    views: int
 
 
 class PostUpdate(BaseModel):

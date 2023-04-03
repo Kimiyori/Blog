@@ -92,6 +92,7 @@ async def test_get_post(client_app, session_mock, user_data):
     post = POST.dict()
     post["user_id"] = user_data[0]
     post["created_at"] = post["updated_at"] = datetime.now()
+    post['views'] = 1
     post = await session_mock[0].test.posts.insert_one(
         post,
         session=session_mock[1],
@@ -107,6 +108,16 @@ async def test_get_post(client_app, session_mock, user_data):
     assert json["_id"]
     assert json["user_id"] == str(user_data[0])
     assert json["created_at"] and json["updated_at"]
+    assert json['views'] == 2
+    response2 = await client_app.get(
+        f"/post/{str(post.inserted_id)}",
+        headers={
+            "Content-Type": "application/json",
+        },
+    )
+    assert response2.status_code == status.HTTP_200_OK
+    json = response2.json()
+    assert json['views'] == 3
 
 
 async def test_get_post_not_exist(client_app):
@@ -176,7 +187,6 @@ async def test_update_post(client_app, session_mock, user_data, client):
                 session=session,
             ).to_list(1)
             expected = expected[0]
-            print(expected)
             assert expected["title"] == updated_post.title
             assert len(expected["content"]) == 2
             assert expected["content"][0]["data"]["text"] == "new_text"

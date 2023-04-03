@@ -40,7 +40,7 @@ class MongoDbRepository(AbstractRepository[T]):
         return count
 
     async def get_by_id(self, id: ObjectId | str) -> dict[str, Any] | None:
-        object: dict[str, str | int | ObjectId] | None = await self.collection.find_one(
+        object: dict[str, Any] | None = await self.collection.find_one(
             {"_id": ObjectId(id)}, session=self.session
         )
         return object

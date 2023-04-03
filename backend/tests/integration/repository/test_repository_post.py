@@ -8,7 +8,7 @@ from src.db.schemas.post import (
     ImageBlock,
 )
 from src.repository.post import PostRepository
-from tests.conftest import session_mock, mock_settings
+from tests.conftest import session_mock, mock_settings, client
 
 
 @pytest.fixture
@@ -101,3 +101,15 @@ async def test_repository_update_post_empty(repo, post, session_mock):
     assert len(updated_post["content"]) == 2
     for block_upd, block_exp in zip(updated_post["content"], POST_CREATE.content):
         assert block_upd["order"] == block_exp.order
+
+
+async def test_get_full_post(repo, post, client, mock_settings):
+    old_post = await repo.get_by_id(post)
+    assert old_post["views"] == 1
+    result = await repo.get_full_post(post)
+    assert result["views"] == 2
+    async with await client.start_session() as session:
+        async with session.start_transaction():
+            new_repo = PostRepository(client, session, mock_settings.MONGODB_DATABASE)
+            result = await new_repo.get_full_post(post)
+            assert result["views"] == 3

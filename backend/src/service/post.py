@@ -31,7 +31,7 @@ async def get_post_service(
         uow_context_manager(PostRepository)
     ),
 ) -> PostOut:
-    if (post := await uow.repo.get_by_id(post_id)) is None:
+    if (post := await uow.repo.get_full_post(post_id)) is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="post with given id doesnt exist",
