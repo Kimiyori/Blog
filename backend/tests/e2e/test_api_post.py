@@ -4,7 +4,7 @@ from jose import jwt
 import pytest_asyncio
 import pytest
 from fastapi import status
-from src.service.user import (
+from src.utils.auth import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
     get_password_hash,
     SECRET_KEY,
@@ -51,8 +51,8 @@ async def test_create_post(client_app, user_data):
         data=POST.json(),
         headers={
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {user_data[1]}",
         },
+        cookies={"access_token": f"Bearer {user_data[1]}"},
     )
     assert response.status_code == status.HTTP_201_CREATED
     json = response.json()
@@ -92,7 +92,7 @@ async def test_get_post(client_app, session_mock, user_data):
     post = POST.dict()
     post["user_id"] = user_data[0]
     post["created_at"] = post["updated_at"] = datetime.now()
-    post['views'] = 1
+    post["views"] = 1
     post = await session_mock[0].test.posts.insert_one(
         post,
         session=session_mock[1],
@@ -108,7 +108,7 @@ async def test_get_post(client_app, session_mock, user_data):
     assert json["_id"]
     assert json["user_id"] == str(user_data[0])
     assert json["created_at"] and json["updated_at"]
-    assert json['views'] == 2
+    assert json["views"] == 2
     response2 = await client_app.get(
         f"/post/{str(post.inserted_id)}",
         headers={
@@ -117,7 +117,7 @@ async def test_get_post(client_app, session_mock, user_data):
     )
     assert response2.status_code == status.HTTP_200_OK
     json = response2.json()
-    assert json['views'] == 3
+    assert json["views"] == 3
 
 
 async def test_get_post_not_exist(client_app):
@@ -136,8 +136,8 @@ async def test_delete_post(client_app, session_mock, user_data):
         f"/post/{str(post.inserted_id)}",
         headers={
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {user_data[1]}",
         },
+        cookies={"access_token": f"Bearer {user_data[1]}"},
     )
     assert response.status_code == status.HTTP_204_NO_CONTENT
 
@@ -147,8 +147,8 @@ async def test_delete_post_not_exist(client_app, user_data):
         f"/post/{ObjectId()}",
         headers={
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {user_data[1]}",
         },
+        cookies={"access_token": f"Bearer {user_data[1]}"},
     )
     assert response.status_code == status.HTTP_204_NO_CONTENT
 
@@ -160,6 +160,7 @@ async def test_update_post(client_app, session_mock, user_data, client):
         post,
         session=session_mock[1],
     )
+    await session_mock[1].commit_transaction()
     updated_post = PostUpdate(
         title="updated_post",
         update_content=[
@@ -173,8 +174,8 @@ async def test_update_post(client_app, session_mock, user_data, client):
         data=updated_post.json(),
         headers={
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {user_data[1]}",
         },
+        cookies={"access_token": f"Bearer {user_data[1]}"},
     )
     assert response.status_code == status.HTTP_200_OK
     async with await client.start_session() as session:
@@ -191,6 +192,7 @@ async def test_update_post(client_app, session_mock, user_data, client):
             assert len(expected["content"]) == 2
             assert expected["content"][0]["data"]["text"] == "new_text"
             assert expected["content"][1] == updated_post.update_content[0].dict()
+
 
 async def test_update_post_not_auth(client_app, session_mock):
     post = POST.dict()
@@ -211,4 +213,3 @@ async def test_update_post_not_auth(client_app, session_mock):
         data=updated_post.json(),
     )
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    

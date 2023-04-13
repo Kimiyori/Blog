@@ -6,7 +6,6 @@ import pytest
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseSettings
 import pytest_asyncio
-from src.config import get_settings
 from src.main import create_app
 from src.db.base import async_mongo_session
 from httpx import AsyncClient

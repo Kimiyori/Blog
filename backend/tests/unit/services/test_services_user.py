@@ -18,7 +18,7 @@ from src.repository.abc import AbstractRepository, T
 from src.unit_of_work import AbstractUnitOfWork
 
 
-USER = UserIn(username="test", email="text", password="test")
+USER = UserIn(username="test", email="text", password=get_password_hash("test"))
 
 
 class FakeRepository(AbstractRepository[T]):

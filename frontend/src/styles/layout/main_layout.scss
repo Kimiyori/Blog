@@ -1,0 +1,50 @@
+@use "../base.scss";
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+.main_layout {
+  display: grid;
+  grid-template-areas:
+    "header header header"
+    "nav section aside"
+    "footer footer footer";
+  grid-template-rows: 60px 1fr 50px;
+  grid-template-columns: 0 1fr 0;
+  position: relative;
+  @include mixins.for-size(tablet-portrait-up) {
+    grid-template-columns: 0.5fr minmax(40%, 500px) 0.5fr;
+  }
+  @include mixins.for-size(tablet-landscape-up) {
+    grid-template-columns: 0.5fr minmax(40%, 640px) 0.5fr;
+  }
+  @include mixins.for-size(desktop-up) {
+    grid-template-columns: 0.5fr minmax(40%, 780px) 0.5fr;
+  }
+  @include mixins.for-size(big-desktop-up) {
+    grid-template-columns: 0.5fr minmax(40%, 980px) 0.5fr;
+  }
+}
+
+footer {
+  background: variables.$secondary_color;
+  grid-area: footer;
+}
+
+header {
+  grid-area: header;
+  background-color: variables.$secondary_color;
+}
+nav {
+  background-color: variables.$main_color;
+  grid-area: nav;
+}
+aside {
+  background-color: variables.$main_color;
+  grid-area: aside;
+}
+section {
+  grid-area: section;
+  min-height: 100vh;
+  background-color: variables.$main_color;
+  padding-bottom: 1rem;
+  padding-top: 1rem;
+}

@@ -3,7 +3,7 @@ from fastapi import Depends, HTTPException, status
 from src.db.schemas.post import PostIn, PostOut, PostCreate, PostUpdate
 from src.db.schemas.user import UserOut
 from src.repository.post import PostRepository
-from src.service.user import get_current_user
+from src.service.user import get_current_user, oauth2_scheme
 from src.unit_of_work import MongoDBUnitOfWork, uow_context_manager
 
 
@@ -41,7 +41,7 @@ async def get_post_service(
 
 async def delete_post_service(
     post_id: str,
-    user: UserOut = Depends(get_current_user),
+    token: str = Depends(oauth2_scheme),
     uow: MongoDBUnitOfWork[PostRepository] = Depends(
         uow_context_manager(PostRepository)
     ),
@@ -53,10 +53,9 @@ async def delete_post_service(
 async def update_post_service(
     post_id: str,
     post: PostUpdate,
-    user: UserOut = Depends(get_current_user),
+    token: str = Depends(oauth2_scheme),
     uow: MongoDBUnitOfWork[PostRepository] = Depends(
         uow_context_manager(PostRepository)
     ),
 ) -> None:
     await uow.repo.update_post(post_id, post)
-    await uow.commit()

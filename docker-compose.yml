@@ -23,7 +23,21 @@ services:
       - mongodb_data:/bitnami/mongodb
     ports:
       - 27017:27017
-
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    command: npm start
+    ports:
+      - 3000:3000
+    volumes:
+      - ./frontend:/frontend:delegated
+      - /frontend/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+      - REACT_APP_BACKEND_URL=http://127.0.0.1:8000
+    restart: always
 volumes:
   mongodb_data:
     driver: local
