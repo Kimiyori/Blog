@@ -1,3 +1,4 @@
+from bson import ObjectId
 from src.db.schemas.abc import PyObjectId
 from src.repository.abc import MongoDbRepository
 from motor.motor_asyncio import (
@@ -5,7 +6,7 @@ from motor.motor_asyncio import (
     AsyncIOMotorCollection,
     AsyncIOMotorClientSession,
 )
-from src.db.schemas.user import UserBase
+from src.db.schemas.user import UserBase, UserUpdate
 from typing import TypedDict
 
 
@@ -31,3 +32,10 @@ class UserRepository(MongoDbRepository[UserBase]):
             {"username": name}, session=self.session
         )
         return user
+
+    async def update_user(self, user_id: PyObjectId, updated_data: UserUpdate) -> None:
+        await self.collection.update_one(
+            {"_id": ObjectId(user_id)},
+            {"$set": updated_data.dict(exclude_none=True)},
+            session=self.session,
+        )

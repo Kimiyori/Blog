@@ -4,14 +4,12 @@ from fastapi import HTTPException
 import pytest
 from typing import Any
 from src.service.user import (
-    create_access_token,
-    authenticate_user,
     create_new_user,
-    get_password_hash,
     get_current_user,
-    SECRET_KEY,
-    ALGORITHM,
 )
+from src.service.auth import authenticate_user
+from src.utils.auth import ALGORITHM,SECRET_KEY,get_password_hash
+from src.utils.auth import create_access_token
 from jose import jwt
 from src.db.schemas.user import UserIn
 from src.repository.abc import AbstractRepository, T

@@ -1,7 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { LoginInput } from "pages/login.page";
-import { RegisterInput } from "pages/register.page";
-import { IGenericResponse, logout } from "features/userSlice";
+import {  logout } from "features/userSlice";
 import { userApi } from "api/userApi";
 import customFetchBase from "./customFetchBase";
 
@@ -9,16 +8,7 @@ export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: customFetchBase,
   endpoints: (builder) => ({
-    registerUser: builder.mutation<IGenericResponse, RegisterInput>({
-      query(data) {
-        const { passwordConfirm, ...body } = data;
-        return {
-          url: "users",
-          method: "POST",
-          body: body,
-        };
-      },
-    }),
+
     loginUser: builder.mutation<
       { access_token: string; token_type: string },
       LoginInput
@@ -28,7 +18,7 @@ export const authApi = createApi({
         form.append("username", data.username);
         form.append("password", data.password);
         return {
-          url: "users/token",
+          url: "auth/token",
           method: "POST",
           headers: {
             Accept: "application/json",
@@ -41,14 +31,16 @@ export const authApi = createApi({
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           await queryFulfilled;
-          await dispatch(userApi.endpoints.getMe.initiate(null,{forceRefetch: true}));
+          await dispatch(
+            userApi.endpoints.getMe.initiate(null, { forceRefetch: true })
+          );
         } catch (error) {}
       },
     }),
     logoutUser: builder.mutation<void, void>({
       query() {
         return {
-          url: "users/logout",
+          url: "auth/logout",
           credentials: "include",
         };
       },
@@ -64,6 +56,5 @@ export const authApi = createApi({
 
 export const {
   useLoginUserMutation,
-  useRegisterUserMutation,
   useLogoutUserMutation,
 } = authApi;

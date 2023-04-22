@@ -25,7 +25,7 @@
 }
 
 footer {
-  background: variables.$secondary_color;
+  background-color: variables.$secondary_color;
   grid-area: footer;
 }
 
@@ -43,7 +43,6 @@ aside {
 }
 section {
   grid-area: section;
-  min-height: 100vh;
   background-color: variables.$main_color;
   padding-bottom: 1rem;
   padding-top: 1rem;

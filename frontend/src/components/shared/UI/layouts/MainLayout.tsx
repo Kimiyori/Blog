@@ -6,15 +6,13 @@ export default function MainLayout() {
   return (
     <>
       <div className="main_layout">
-        <header>
-          <Navbar />
-        </header>
+        <Navbar />
         <nav></nav>
         <section>
           <Outlet />
         </section>
         <aside></aside>
-        <footer></footer>
+        {/* <footer></footer> */}
       </div>
     </>
   );

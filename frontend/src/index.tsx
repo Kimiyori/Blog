@@ -1,5 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
+import { StyledEngineProvider } from "@mui/material/styles";
 import { CookiesProvider } from "react-cookie";
 import { Provider } from "react-redux";
 import { store } from "./app/store";
@@ -16,7 +17,9 @@ root.render(
     <Provider store={store}>
       <CookiesProvider>
         <AuthMiddleware>
-          <App />
+          <StyledEngineProvider injectFirst>
+            <App />
+          </StyledEngineProvider>
         </AuthMiddleware>
       </CookiesProvider>
     </Provider>

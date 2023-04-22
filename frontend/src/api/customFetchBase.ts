@@ -30,7 +30,7 @@ import {
   
         try {
           const refreshResult = await baseQuery(
-            { credentials: 'include', url: 'users/refresh' },
+            { credentials: 'include', url: 'auth/refresh' },
             api,
             extraOptions
           );

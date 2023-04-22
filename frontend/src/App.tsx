@@ -9,6 +9,8 @@ import HomePage from "pages/home.page";
 import UnauthorizePage from "pages/unauthorize.page";
 import RequireUser from "components/features/requireUser";
 import AdminPage from "pages/admin.page";
+import UserForbid from "components/features/userForbid";
+import ProfilePage from "pages/UserProfile/profile.page";
 function App() {
   return (
     <>
@@ -17,8 +19,13 @@ function App() {
         <Routes>
           <Route path="/" element={<MainLayout />}>
             <Route index element={<HomePage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/login" element={<LoginPage />} />
+
+            <Route path="/users/:username" element={<ProfilePage />} />
+
+            <Route element={<UserForbid />}>
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/login" element={<LoginPage />} />
+            </Route>
             <Route element={<RequireUser allowedRoles={["user"]} />}>
               <Route path="admin" element={<AdminPage />} />
             </Route>

@@ -1,13 +1,20 @@
-import { Box, CircularProgress, Container } from '@mui/material';
+import { Box, CircularProgress, Container } from "@mui/material";
 
 const FullScreenLoader = () => {
   return (
-    <Container sx={{ height: '95vh' }}>
+    <Container>
       <Box
-        display='flex'
-        alignItems='center'
-        justifyContent='center'
-        sx={{ height: '100%' }}
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        sx={{
+          height: "100%",
+          zIndex: 1,
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+        }}
       >
         <CircularProgress />
       </Box>

@@ -2,38 +2,35 @@ import {
   AppBar,
   Avatar,
   Box,
-  Container,
+  Divider,
   IconButton,
   Toolbar,
-  Tooltip,
+  Menu,
+  MenuItem,
   Typography,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "app/store";
 import { useLogoutUserMutation } from "api/authApi";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
-import { LoadingButton as _LoadingButton } from "@mui/lab";
-
-const LoadingButton = styled(_LoadingButton)`
-  padding: 0.4rem;
-  background-color: #f9d13e;
-  color: #2363eb;
-  font-weight: 500;
-  &:hover {
-    background-color: #ebc22c;
-    transform: translateY(-2px);
-  }
-`;
+import React from "react";
+import "styles/components/_navigation.scss";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.userState.user);
-
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [logoutUser, { isLoading, isSuccess, error, isError }] =
     useLogoutUserMutation();
 
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   useEffect(() => {
     if (isSuccess) {
       // window.location.href = '/login';
@@ -50,65 +47,122 @@ export default function Navbar() {
   const onLogoutHandler = async () => {
     logoutUser();
   };
+
   return (
     <>
       <AppBar position="static">
-        <Container maxWidth="lg">
-          <Toolbar>
-            <Typography
-              variant="h6"
-              onClick={() => navigate("/")}
-              sx={{ cursor: "pointer" }}
+        <Toolbar>
+          <Typography
+            variant="h6"
+            onClick={() => navigate("/")}
+            sx={{ cursor: "pointer" }}
+          >
+            SAERY BLOG
+          </Typography>
+          <Box display="flex" sx={{ ml: "auto" }}>
+            <IconButton
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleMenu}
+              sx={{ p: 0 }}
             >
-              CodevoWeb
-            </Typography>
-            <Box display="flex" sx={{ ml: "auto" }}>
-              {!user && (
-                <>
-                  <LoadingButton
-                    sx={{ mr: 2 }}
-                    onClick={() => navigate("/register")}
+              <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+            </IconButton>
+            {!user ? (
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "left",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+              >
+                <MenuItem
+                  onClick={() => {
+                    navigate("/register");
+                    handleClose();
+                  }}
+                >
+                  Sign Up
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    navigate("/login");
+                    handleClose();
+                  }}
+                >
+                  Sign In
+                </MenuItem>
+              </Menu>
+            ) : (
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "left",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+              >
+                <MenuItem
+                  onClick={() => {
+                    navigate(`/users/${user.username}`);
+                    handleClose();
+                  }}
+                >
+                  <IconButton
+                    aria-label="account of current user"
+                    aria-controls="menu-appbar"
+                    aria-haspopup="true"
+                    onClick={handleMenu}
+                    sx={{ p: 0 }}
                   >
-                    SignUp
-                  </LoadingButton>
-                  <LoadingButton onClick={() => navigate("/login")}>
-                    Login
-                  </LoadingButton>
-                </>
-              )}
-              {user && (
-                <LoadingButton
-                  sx={{ backgroundColor: "#eee" }}
-                  onClick={onLogoutHandler}
-                  loading={isLoading}
+                    <Avatar alt="Remy Sharp" />
+                  </IconButton>
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    navigate(`/users/${user.username}`);
+                    handleClose();
+                  }}
+                >
+                  {user.username}
+                </MenuItem>
+                <Divider flexItem />
+                <MenuItem
+                  onClick={() => {
+                    navigate(`/settings`);
+                    handleClose();
+                  }}
+                >
+                  Settings
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    onLogoutHandler();
+                    handleClose();
+                  }}
                 >
                   Logout
-                </LoadingButton>
-              )}
-              {user && user?.type === "admin" && (
-                <LoadingButton
-                  sx={{ backgroundColor: "#eee", ml: 2 }}
-                  onClick={() => navigate("/admin")}
-                >
-                  Admin
-                </LoadingButton>
-              )}
-              <Box sx={{ ml: 4 }}>
-                <Tooltip
-                  title="Post settings"
-                  onClick={() => navigate("/profile")}
-                >
-                  <IconButton sx={{ p: 0 }}>
-                    <Avatar
-                      alt="Remy Sharp"
-                      src="/static/images/avatar/2.jpg"
-                    />
-                  </IconButton>
-                </Tooltip>
-              </Box>
-            </Box>
-          </Toolbar>
-        </Container>
+                </MenuItem>
+              </Menu>
+            )}
+          </Box>
+        </Toolbar>
       </AppBar>
     </>
   );

@@ -6,6 +6,7 @@ export interface IUser {
   createdAt: Date;
   updatedAt: Date;
   type: string;
+  image: string;
 }
 
 export interface IGenericResponse {
@@ -25,7 +26,9 @@ export const userSlice = createSlice({
   initialState,
   name: "userSlice",
   reducers: {
-    logout: () => initialState,
+    logout: () => {
+      console.log(1111)
+      return initialState},
     setUser: (state, action: PayloadAction<IUser>) => {
       state.user = action.payload;
     },

@@ -1,0 +1,74 @@
+.user-profile {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(2, 1fr);
+    gap: 0px 0px;
+    grid-template-areas:
+        "upper-banner"
+        "bottom-user-block";
+}
+.upper-banner {
+    grid-area: upper-banner;
+
+    img {
+        height: 200px;
+        width: 100%;
+        object-fit: cover;
+    }
+}
+.bottom-user-block {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    grid-template-rows: repeat(2, auto);
+    gap: 0px 0px;
+    grid-template-areas:
+        "user-nav user-data"
+        "user-nav user-data";
+    grid-area: bottom-user-block;
+}
+.user-data {
+    margin-top: 1rem;
+    grid-area: user-data;
+    gap: 1rem;
+    display: flex;
+    flex-direction: column;
+
+}
+.user-nav {
+    bottom: 100px;
+    grid-area: user-nav;
+    position: absolute;
+    margin-left: 20%;
+    gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .MuiAvatar-root {
+        height: 150px;
+        width: 150px;
+    }
+    .profile-image {
+        position: relative;
+    }
+    label {
+        width: 100%;
+        height: 100%;
+    }
+    .profile-image_hover {
+        position: absolute;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+
+        background-color: rgba($color: #000000, $alpha: 0.155);
+
+        .profile-image_hover_upload-button {
+            font-size: 30px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    }
+}

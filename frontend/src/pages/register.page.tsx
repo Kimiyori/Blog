@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
 import { toast } from 'react-toastify';
-import { useRegisterUserMutation } from 'api/authApi';
+import { useRegisterUserMutation } from 'api/userApi';
 
 import "styles/pages/auth.scss";
 
