@@ -2,33 +2,34 @@
 @use "../abstracts/variables";
 
 .MuiMenu-paper {
-  width:200px;
+  width: 100px;
+  padding: 8px;
 
-
-  ul {
-    width:100%;
+  .MuiList-root {
     display: flex;
-    justify-content: center;
     flex-direction: column;
     align-items: center;
-    margin-top: 1rem;
-    li {
-      width: 100%;
-      display: table-cell; 
-      text-align: center; 
-      vertical-align: middle;
+    padding: 0;
+    .MuiMenuItem-root {
+      display: table-cell;
+      text-align: center;
+      &:hover {
+        color: green;
+        background-color: inherit;
+      }
     }
-  }
-  li:not(:last-child) {
-    margin-bottom: 0.5rem;
-  }
-  li:not(:first-child) {
-    margin-top: 0.5rem;
   }
 
   .MuiAvatar-root {
     width: 64px;
     height: 64px;
-
+    border: 1px solid transparent;
+    &:hover {
+      border: 1px solid green;
+    }
+  }
+  @include mixins.respond-to(small) {
+    width: 150px;
+    padding: 16px;
   }
 }

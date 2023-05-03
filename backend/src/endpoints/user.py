@@ -10,7 +10,7 @@ from src.service.user import (
     get_user_service,
     update_user_service,
 )
-from src.db.schemas.user import Token, UserIn, UserOut
+from src.db.schemas.user import Token, UserIn, UserOut, UserUpdate
 
 router = APIRouter(
     prefix="/users",
@@ -50,5 +50,7 @@ async def get_user(user: UserOut = Depends(get_user_service)) -> UserOut:
 @router.patch(
     "/{username}",
 )
-async def put_user(user: UserOut = Depends(update_user_service)) -> dict[str, int]:
-    return {"ss": 1}
+async def put_user(
+    updated_data: UserUpdate = Depends(update_user_service),
+) -> UserUpdate:
+    return updated_data

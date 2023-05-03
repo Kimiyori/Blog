@@ -1,0 +1,22 @@
+.MuiStack-root {
+    gap:16px;
+}
+.MuiDivider-root {
+    margin: 16px 0 16px 0;
+}
+.settings-block {
+    padding: 16px;
+    background-color: bisque;
+    border-radius: 16px;
+    &__label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    &__form-line {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+    }
+}

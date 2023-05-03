@@ -3,12 +3,12 @@ import { StyledEngineProvider } from "@mui/material/styles";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { object, string, TypeOf } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import FormInput from "components/core/FormInput";
+import FormInput from "components/shared/Entity/FormInput";
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
-import { toast } from 'react-toastify';
-import { useRegisterUserMutation } from 'api/userApi';
+import { toast } from "react-toastify";
+import { useRegisterUserMutation } from "api/userApi";
 
 import "styles/pages/auth.scss";
 
@@ -33,7 +33,7 @@ const RegisterPage = () => {
   const methods = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
   });
-  
+
   // ? Calling the Register Mutation
   const [registerUser, { isLoading, isSuccess, error, isError }] =
     useRegisterUserMutation();
@@ -48,8 +48,8 @@ const RegisterPage = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      toast.success('User registered successfully');
-      navigate('/login');
+      toast.success("User registered successfully");
+      navigate("/login");
     }
 
     if (isError) {
@@ -57,12 +57,12 @@ const RegisterPage = () => {
       if (Array.isArray((error as any).data.error)) {
         (error as any).data.error.forEach((el: any) =>
           toast.error(el.message, {
-            position: 'top-right',
+            position: "top-right",
           })
         );
       } else {
         toast.error((error as any).data.message, {
-          position: 'top-right',
+          position: "top-right",
         });
       }
     }
@@ -80,16 +80,15 @@ const RegisterPage = () => {
     registerUser(values);
   };
   return (
-    <StyledEngineProvider injectFirst>
-      <Container maxWidth={false} className="register-main-page">
-        <Box className="register-box">
-          <Typography className="welcome-text" component="h1">
+      <Container  className="auth-main">
+        <Box className="auth-box">
+          <Typography component="h1">
             Welcome!
           </Typography>
           <FormProvider {...methods}>
             <Box
               component="form"
-              className="register-form"
+              className="auth-form"
               onSubmit={handleSubmit(onSubmitHandler)}
               noValidate
               autoComplete="off"
@@ -117,6 +116,7 @@ const RegisterPage = () => {
                 className="loading-button"
                 disableElevation
                 type="submit"
+                loading={isLoading}
               >
                 Sign Up
               </LoadingButton>
@@ -124,7 +124,6 @@ const RegisterPage = () => {
           </FormProvider>
         </Box>
       </Container>
-    </StyledEngineProvider>
   );
 };
 

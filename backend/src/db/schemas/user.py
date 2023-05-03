@@ -43,4 +43,5 @@ class TokenData(BaseModel):
 class UserUpdate(BaseModel):
     email: str | None
     image: str | None
+    password: str | None
     updated_at: datetime = datetime.now()

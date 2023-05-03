@@ -10,16 +10,16 @@
   grid-template-rows: 60px 1fr 50px;
   grid-template-columns: 0 1fr 0;
   position: relative;
-  @include mixins.for-size(tablet-portrait-up) {
+  @include mixins.for-size(sm) {
     grid-template-columns: 0.5fr minmax(40%, 500px) 0.5fr;
   }
-  @include mixins.for-size(tablet-landscape-up) {
+  @include mixins.for-size(md) {
     grid-template-columns: 0.5fr minmax(40%, 640px) 0.5fr;
   }
-  @include mixins.for-size(desktop-up) {
+  @include mixins.for-size(lg) {
     grid-template-columns: 0.5fr minmax(40%, 780px) 0.5fr;
   }
-  @include mixins.for-size(big-desktop-up) {
+  @include mixins.for-size(xl) {
     grid-template-columns: 0.5fr minmax(40%, 980px) 0.5fr;
   }
 }

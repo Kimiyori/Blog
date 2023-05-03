@@ -48,7 +48,7 @@ async def get_current_user(
     username = decode_token(token)
     if (user := await uow.repo.get_by_name(username)) is None:
         raise exc.UserNotExist()
-    return UserOut(username=user["username"], _id=user["_id"], email=user["email"])
+    return UserOut(**user)
 
 
 async def get_user_service(
@@ -66,23 +66,23 @@ async def update_user_service(
     username: str,
     image: UploadFile | None = None,
     email: str = Form(None),
+    password: str = Form(None),
     user: UserOut = Depends(get_current_user),
     uow: MongoDBUnitOfWork[UserRepository] = Depends(
         uow_context_manager(UserRepository)
     ),
-) -> int:
+) -> UserUpdate:
     if user.username != username:
         raise exc.UserNotExist()
     filename = get_user_image_filename(image)
     upd_obj = UserUpdate(
         email=email if email else None,
-        image=(
-            get_user_avatar_path(user.username) + "/" + get_user_image_filename(image)
-        )
+        image=get_user_avatar_path(user.username) + "/" + filename
         if filename
         else None,
+        password=get_password_hash(password) if password else None,
     )
-    await uow.repo.update_user(user.id, upd_obj)
+    updated_data = await uow.repo.update_user(user.id, upd_obj)
     if image:
         save_user_image(image, filename, user.username)
-    return 1
+    return UserUpdate(**updated_data)

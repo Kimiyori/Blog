@@ -1,9 +1,8 @@
 import { Box, Container, Typography } from "@mui/material";
-import { StyledEngineProvider } from "@mui/material/styles";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { object, string, TypeOf } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import FormInput from "components/core/FormInput";
+import FormInput from "components/shared/Entity/FormInput";
 import { useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
@@ -69,16 +68,15 @@ const LoginPage = () => {
     loginUser(values);
   };
   return (
-    <StyledEngineProvider injectFirst>
-      <Container maxWidth={false} className="register-main-page">
-        <Box className="register-box">
-          <Typography className="welcome-text" component="h1">
+      <Container  className="auth-main">
+        <Box className="auth-box">
+          <Typography component="h1">
             Welcome Back!
           </Typography>
           <FormProvider {...methods}>
             <Box
               component="form"
-              className="register-form"
+              className="auth-form "
               onSubmit={handleSubmit(onSubmitHandler)}
               noValidate
               autoComplete="off"
@@ -93,7 +91,6 @@ const LoginPage = () => {
                   Sign Up
                 </Link>
               </Typography>
-
               <LoadingButton
                 variant="contained"
                 fullWidth
@@ -108,7 +105,6 @@ const LoginPage = () => {
           </FormProvider>
         </Box>
       </Container>
-    </StyledEngineProvider>
   );
 };
 

@@ -11,6 +11,7 @@ import RequireUser from "components/features/requireUser";
 import AdminPage from "pages/admin.page";
 import UserForbid from "components/features/userForbid";
 import ProfilePage from "pages/UserProfile/profile.page";
+import UserSettingsPage from "pages/settings.page";
 function App() {
   return (
     <>
@@ -28,6 +29,7 @@ function App() {
             </Route>
             <Route element={<RequireUser allowedRoles={["user"]} />}>
               <Route path="admin" element={<AdminPage />} />
+              <Route path="/users/:username/settings" element={<UserSettingsPage />} />
             </Route>
             <Route path="unauthorized" element={<UnauthorizePage />} />
           </Route>

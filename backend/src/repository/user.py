@@ -1,4 +1,5 @@
 from bson import ObjectId
+from pymongo import ReturnDocument
 from src.db.schemas.abc import PyObjectId
 from src.repository.abc import MongoDbRepository
 from motor.motor_asyncio import (
@@ -15,6 +16,7 @@ class TypedReturn(TypedDict):
     username: str
     password: str
     email: str | None
+    image: str | None
 
 
 class UserRepository(MongoDbRepository[UserBase]):
@@ -33,9 +35,16 @@ class UserRepository(MongoDbRepository[UserBase]):
         )
         return user
 
-    async def update_user(self, user_id: PyObjectId, updated_data: UserUpdate) -> None:
-        await self.collection.update_one(
+    async def update_user(
+        self, user_id: PyObjectId, updated_data: UserUpdate
+    ) -> TypedReturn | None:
+        updated_user: TypedReturn | None = await self.collection.find_one_and_update(
             {"_id": ObjectId(user_id)},
             {"$set": updated_data.dict(exclude_none=True)},
+            projection={
+                "password": False,
+            },
             session=self.session,
+            return_document=ReturnDocument.AFTER,
         )
+        return updated_user

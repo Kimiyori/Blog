@@ -18,12 +18,10 @@ async def authenticate_user(
     ),
 ) -> UserIn | bool:
     if (user := await uow.repo.get_by_name(form_data.username)) is None:
-        return False
+        raise exc.UserNotExist()
     if not verify_password(form_data.password, user["password"]):
-        return False
-    return UserIn(
-        username=user["username"], password=user["password"], email=user["email"]
-    )
+        raise exc.ValidateCredentials()
+    return UserIn(**user)
 
 
 async def refresh_token_check(

@@ -1,11 +1,7 @@
 @use "../abstracts/mixins";
 @use "../abstracts/variables";
 .loading-button {
-    padding: 0.6rem 0;
     background-color: variables.$secondary_color;
-    color: white;
-    font-weight: 500;
-    margin-top: 8px;
     &:hover {
         background-color: variables.$secondary_color;
         transform: translateY(-2px);
@@ -13,32 +9,31 @@
 }
 .link-item {
     text-decoration: none;
-    color:  variables.$secondary_color;
+    color: variables.$secondary_color;
     &:hover {
         text-decoration: underline;
     }
 }
-.register-main-page {
-    display: flex ;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+.auth-main {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-25%);
+    h1 {
+        font-size: variables.$font_size_big;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
 }
-.register-box {
+.auth-box {
     display: flex;
-    justify-content: center;
     align-items: center;
     flex-direction: column;
 }
-.welcome-text {
-    font-size: 2rem;
-    font-weight: 600;
-    margin-bottom: 2px;
-    letter-spacing: 1px;
-}
-.register-form {
-    width:auto;
-    background-color:  variables.$block_color;
-    padding:1rem;
+
+.auth-form {
+    width: auto;
+    background-color: variables.$block_color;
+    padding: 1rem;
     border-radius: 16px;
 }

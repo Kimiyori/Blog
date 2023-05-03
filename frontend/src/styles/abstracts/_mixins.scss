@@ -1,24 +1,24 @@
 @use "../abstracts/variables";
 
 @mixin for-size($size) {
-    @if $size == phone-only {
+    @if $size == xs {
         @media (max-width: 599px) {
             @content;
         }
-    } @else if $size == tablet-portrait-up {
+    } @else if $size == sm {
         @media (min-width: 600px) and (max-width: 899px) {
             @content;
         }
-    } @else if $size == tablet-landscape-up {
+    } @else if $size == md {
         @media (min-width: 900px) and (max-width: 1199px) {
             @content;
         }
-    } @else if $size == desktop-up {
-        @media (min-width: 1200px) and (max-width: 1799px) {
+    } @else if $size == lg {
+        @media (min-width: 1200px) and (max-width: 1535px) {
             @content;
         }
-    } @else if $size == big-desktop-up {
-        @media (min-width: 1800px) {
+    } @else if $size == xl {
+        @media (min-width: 1536px) {
             @content;
         }
     }
@@ -61,3 +61,19 @@
         font-size: $big-desktop-up;
     }
 }
+
+@mixin respond-to($breakpoint) {
+    // If the key exists in the map
+    @if map-has-key(variables.$breakpoints, $breakpoint) {
+      // Prints a media query based on the value
+      @media #{inspect(map-get(variables.$breakpoints, $breakpoint))} {
+        @content;
+      }
+    }
+   
+    // If the key doesn't exist in the map
+    @else {
+      @warn "Unfortunately, no value could be retrieved from `#{$breakpoint}`. "
+          + "Available breakpoints are: #{map-keys($breakpoints)}.";
+    }
+  }

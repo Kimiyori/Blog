@@ -1,6 +1,6 @@
 from pathlib import Path
 import uuid
-
+import shutil
 from fastapi import UploadFile
 
 
@@ -10,6 +10,7 @@ def get_user_avatar_path(username: str) -> str:
 
 def save_user_image(image: UploadFile, filename: str, username: str) -> None:
     file_location = Path("files/" + get_user_avatar_path(username))
+    shutil.rmtree(file_location)
     file_location.mkdir(parents=True, exist_ok=True)
     with open(file_location / filename, "wb+") as file_object:
         file_object.write(image.file.read())

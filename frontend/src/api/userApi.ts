@@ -4,8 +4,8 @@ import { IUser, IGenericResponse } from "features/userSlice";
 import { RegisterInput } from "pages/register.page";
 import customFetchBase from "./customFetchBase";
 
-type UpdateUser = { image?: File; email?: string };
-
+export type UpdateUser = { image?: File; email?: string; password?: string };
+type UpdateUserResponse = { image?: string; email?: string };
 export const userApi = createApi({
   reducerPath: "userApi",
   baseQuery: customFetchBase,
@@ -43,12 +43,14 @@ export const userApi = createApi({
       },
     }),
     updateUser: builder.mutation<
-      { access_token: string; token_type: string },
+      UpdateUserResponse,
       { username: string; body: UpdateUser }
     >({
       query({ username, body }) {
         let form = new FormData();
-        form.append("image", body.image as File, body?.image?.name as string);
+        body.image && form.append("image", body.image as File, body?.image?.name as string);
+        body.password && form.append("password", body.password as string);
+        body.email && form.append("email", body.email as string);
         return {
           url: `users/${username}`,
           method: "PATCH",
