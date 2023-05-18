@@ -1,13 +1,29 @@
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
 .MuiStack-root {
-    gap:16px;
+    padding-top: 16px;
+    gap: 16px;
 }
 .MuiDivider-root {
     margin: 16px 0 16px 0;
 }
 .settings-block {
+    @include mixins.themify(variables.$themes) {
+        background-color: mixins.themed("colorSurface");
+        h6 {
+            color: mixins.themed("colorPrimaryVariant");
+        }
+        .MuiButton-root {
+            background-color: mixins.themed("colorSecondary");
+            color: mixins.themed("colorOnSecondary");
+            border: 0;
+        }
+    }
+
+    border-radius: 1rem;
+
+    margin: 16px;
     padding: 16px;
-    background-color: bisque;
-    border-radius: 16px;
     &__label {
         display: flex;
         justify-content: space-between;

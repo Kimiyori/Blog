@@ -58,7 +58,7 @@ async def get_user_service(
     ),
 ) -> UserOut:
     if (user := await uow.repo.get_by_name(username)) is None:
-        raise exc.UserNotExist()
+        raise  
     return UserOut(**user)
 
 

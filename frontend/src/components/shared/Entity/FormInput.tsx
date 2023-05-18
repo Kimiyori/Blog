@@ -4,11 +4,11 @@ import {
   FormControl,
   Input,
   InputProps,
+  FormLabel,
 } from "@mui/material";
 import { FC } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import "styles/components/form_input.scss";
-
 
 type IFormInputProps = {
   name: string;
@@ -27,9 +27,10 @@ const FormInput: FC<IFormInputProps> = ({ name, label, ...otherProps }) => {
       name={name}
       render={({ field }) => (
         <FormControl fullWidth sx={{ mb: 2 }}>
-          <Typography variant="body2" sx={{  mb: 1, fontWeight: 500 }}>{label}</Typography>
+          <FormLabel sx={{ mb: 1, fontWeight: 500 }}>{label}</FormLabel>
           <Input
             {...field}
+            inputProps={{ 'data-testid':"auth-data-input" }}
             fullWidth
             className="form-input"
             disableUnderline

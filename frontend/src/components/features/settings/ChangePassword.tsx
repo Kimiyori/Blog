@@ -18,6 +18,7 @@ import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import FormInput from "components/shared/Entity/FormInput";
 import { LoadingButton } from "@mui/lab";
 import { useEffect } from "react";
+import NotifyMessage from "features/notifyMessage";
 const changePasswordSchema = object({
   password: string()
     .min(1, "Password is required")
@@ -39,13 +40,20 @@ const ChangePassword = () => {
     formState: { isSubmitSuccessful },
   } = methods;
   const user = useAppSelector((state) => state.userState.user);
-  const [updatePassword, { isLoading }] = useUpdateUserMutation();
+  const [updatePassword, { isLoading, isSuccess, isError, error }] = useUpdateUserMutation();
   const onSubmitHandler: SubmitHandler<
     Omit<ChangePasswordInput, "passwordConfirm">
   > = (values) => {
     user && updatePassword({ username: user.username, body: values });
   };
-  useEffect(() => {
+  NotifyMessage(
+    "You have successfully changed your password",
+    isLoading,
+    isSuccess,
+    isError,
+    error
+  );
+  useEffect(() => { 
     if (isSubmitSuccessful) {
       reset();
     }

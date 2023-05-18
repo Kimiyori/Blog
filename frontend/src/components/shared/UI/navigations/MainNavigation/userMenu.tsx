@@ -2,11 +2,11 @@ import { Avatar, Divider, IconButton, Menu, MenuItem } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "app/store";
 import "styles/components/_navigation.scss";
-
+import { MutableRefObject } from "react";
 export default function UserNavMenu({
   anchorEl,
   handleClose,
-  onLogoutHandler,
+  onLogoutHandler
 }: {
   anchorEl: HTMLElement | null;
   handleClose: () => void;
@@ -14,7 +14,6 @@ export default function UserNavMenu({
 }) {
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.userState.user);
-
   const AnonUser = () => {
     return (
       <Menu
@@ -24,6 +23,7 @@ export default function UserNavMenu({
           horizontal: "left",
         }}
         keepMounted
+        disablePortal
         transformOrigin={{
           vertical: "top",
           horizontal: "left",
@@ -59,6 +59,7 @@ export default function UserNavMenu({
           horizontal: "left",
         }}
         keepMounted
+        disablePortal
         transformOrigin={{
           vertical: "top",
           horizontal: "left",
@@ -72,8 +73,7 @@ export default function UserNavMenu({
             handleClose();
           }}
         >
-          <IconButton
-          >
+          <IconButton>
             <Avatar
               alt="Remy Sharp"
               src={"http://127.0.0.1:81/files/" + user?.image}

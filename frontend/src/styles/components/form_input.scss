@@ -1,6 +1,23 @@
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
 
-.form-input {
-    background-color: white;
-    padding: 0.1rem 1rem;
-    border-radius: 1rem;
+.MuiFormControl-root {
+    
+    label {
+        line-height: 0;
+        margin-top: 1rem;
+        margin-bottom: 0;
+        @include mixins.themify(variables.$themes) {
+            color: mixins.themed("colorOnSurface");
+        }
+    }
+    .form-input {
+        @include mixins.themify(variables.$themes) {
+            background-color: mixins.themed("colorBackground");
+            color:mixins.themed("colorOnBackground");
+        }
+        padding: 0.1rem 1rem;
+        border-radius: 1rem;
+
+    }
 }

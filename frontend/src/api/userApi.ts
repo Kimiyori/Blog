@@ -1,7 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { setUser } from "../features/userSlice";
 import { IUser, IGenericResponse } from "features/userSlice";
-import { RegisterInput } from "pages/register.page";
+import { RegisterInput } from "pages/Register/Register.page";
 import customFetchBase from "./customFetchBase";
 
 export type UpdateUser = { image?: File; email?: string; password?: string };
@@ -48,7 +48,8 @@ export const userApi = createApi({
     >({
       query({ username, body }) {
         let form = new FormData();
-        body.image && form.append("image", body.image as File, body?.image?.name as string);
+        body.image &&
+          form.append("image", body.image as File, body?.image?.name as string);
         body.password && form.append("password", body.password as string);
         body.email && form.append("email", body.email as string);
         return {

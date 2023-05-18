@@ -1,7 +1,3 @@
-///------COLORS------
-$main_color: #fafaff;
-$block_color: #e4d9ff;
-$secondary_color: #1e2749;
 ///------FONT SIZE------
 $font_size_big: 20px;
 $font_size_middle: 16px;
@@ -24,3 +20,35 @@ $breakpoints: (
         min-width: 1600px,
     ),
 ) !default;
+
+///------COLORS------
+$themes: (
+  light: (
+    colorPrimary: #FFA000,
+    colorPrimaryVariant:#FF6F00,
+    colorSecondary: #0288D1,
+    colorSecondaryVariant: #01579B,
+    colorSurface: #E0E0E0,
+    colorBackground:  #FAFAFA,
+    colorError:#B00020,
+    colorOnPrimary:#000000,
+    colorOnSecondary:#FFFFFF,
+    colorOnBackground:#000000,
+    colorOnSurface:#000000,
+    colorOnError:#FFFFFF
+  ),
+  dark: (
+    colorPrimary: #FFA000,
+    colorPrimaryVariant:#FF6F00,
+    colorSecondary: #0288D1,
+    colorSecondaryVariant: #01579B,
+    colorSurface: #1f1f1f,
+    colorBackground:  #121212,
+    colorError:#cf6679,
+    colorOnPrimary:#000000,
+    colorOnSecondary:#ffffff,
+    colorOnBackground:#ffffff,
+    colorOnSurface:#ffffff,
+    colorOnError:#000000
+  ),
+);

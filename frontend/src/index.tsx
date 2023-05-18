@@ -3,10 +3,9 @@ import { createRoot } from "react-dom/client";
 import { StyledEngineProvider } from "@mui/material/styles";
 import { CookiesProvider } from "react-cookie";
 import { Provider } from "react-redux";
-import { store } from "./app/store";
+import { setupStore } from "./app/store";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import "./index.css";
 import AuthMiddleware from "components/features/AuthMiddleware";
 
 const container = document.getElementById("root")!;
@@ -14,7 +13,7 @@ const root = createRoot(container);
 
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
+    <Provider store={setupStore()}>
       <CookiesProvider>
         <AuthMiddleware>
           <StyledEngineProvider injectFirst>

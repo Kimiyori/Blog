@@ -9,8 +9,12 @@ def get_user_avatar_path(username: str) -> str:
 
 
 def save_user_image(image: UploadFile, filename: str, username: str) -> None:
+    # exception handler
+    def handler(func, path, exc_info) -> None:  # type: ignore
+        print(exc_info)
+
     file_location = Path("files/" + get_user_avatar_path(username))
-    shutil.rmtree(file_location)
+    shutil.rmtree(file_location, onerror=handler)
     file_location.mkdir(parents=True, exist_ok=True)
     with open(file_location / filename, "wb+") as file_object:
         file_object.write(image.file.read())

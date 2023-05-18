@@ -21,7 +21,6 @@ export default function Navbar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [logoutUser, { isLoading, isSuccess, error, isError }] =
     useLogoutUserMutation();
-
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -51,6 +50,7 @@ export default function Navbar() {
       <AppBar position="static">
         <Toolbar>
           <Typography
+          className="main-title"
             variant="h6"
             onClick={() => navigate("/")}
             sx={{ cursor: "pointer" }}

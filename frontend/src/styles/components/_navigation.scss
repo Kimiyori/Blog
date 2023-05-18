@@ -1,20 +1,36 @@
 @use "../abstracts/mixins";
 @use "../abstracts/variables";
+.MuiBox-root {
+  .MuiIconButton-root {
+    padding: 4px;
+    &:hover {
+      @include mixins.themify(variables.$themes) {
+        background-color: rgba(mixins.themed("colorSecondary"), 0.9);
+      }
+    }
+  }
+}
 
 .MuiMenu-paper {
   width: 100px;
   padding: 8px;
-
+  @include mixins.themify(variables.$themes) {
+    background-color: mixins.themed("colorBackground");
+    color: mixins.themed("colorOnBackground");
+  }
   .MuiList-root {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 0;
+
     .MuiMenuItem-root {
       display: table-cell;
       text-align: center;
       &:hover {
-        color: green;
+        @include mixins.themify(variables.$themes) {
+          color: mixins.themed("colorSecondary");
+        }
         background-color: inherit;
       }
     }
@@ -23,13 +39,19 @@
   .MuiAvatar-root {
     width: 64px;
     height: 64px;
-    border: 1px solid transparent;
     &:hover {
-      border: 1px solid green;
+      @include mixins.themify(variables.$themes) {
+        border: 2px solid mixins.themed("colorSecondary");
+      }
     }
   }
   @include mixins.respond-to(small) {
     width: 150px;
     padding: 16px;
+  }
+}
+.main-title {
+  @include mixins.themify(variables.$themes) {
+    color: mixins.themed("colorOnPrimary");
   }
 }

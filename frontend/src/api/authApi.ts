@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { LoginInput } from "pages/login.page";
-import {  logout } from "features/userSlice";
+import { LoginInput } from "pages/Login/Login.page";
+import { logout } from "features/userSlice";
 import { userApi } from "api/userApi";
 import customFetchBase from "./customFetchBase";
 
@@ -8,7 +8,6 @@ export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: customFetchBase,
   endpoints: (builder) => ({
-
     loginUser: builder.mutation<
       { access_token: string; token_type: string },
       LoginInput
@@ -54,7 +53,4 @@ export const authApi = createApi({
   }),
 });
 
-export const {
-  useLoginUserMutation,
-  useLogoutUserMutation,
-} = authApi;
+export const { useLoginUserMutation, useLogoutUserMutation } = authApi;

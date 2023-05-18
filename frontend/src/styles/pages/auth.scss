@@ -1,26 +1,34 @@
 @use "../abstracts/mixins";
 @use "../abstracts/variables";
 .loading-button {
-    background-color: variables.$secondary_color;
     &:hover {
-        background-color: variables.$secondary_color;
         transform: translateY(-2px);
+    }
+    @include mixins.themify(variables.$themes) {
+        background-color: mixins.themed("colorSecondary");
+        color: mixins.themed("colorOnSecondary");
     }
 }
 .link-item {
-    text-decoration: none;
-    color: variables.$secondary_color;
-    &:hover {
-        text-decoration: underline;
+    @include mixins.themify(variables.$themes) {
+        color: mixins.themed("colorOnPrimary");
+    }
+    a {
+        text-decoration: none;
+        @include mixins.themify(variables.$themes) {
+            color: mixins.themed("colorSecondary");
+        }
+        &:hover {
+            text-decoration: underline;
+        }
     }
 }
 .auth-main {
     position: relative;
     top: 50%;
     left: 50%;
-    transform: translate(-50%,-25%);
+    transform: translate(-50%, -50%);
     h1 {
-        font-size: variables.$font_size_big;
         font-weight: 600;
         margin-bottom: 10px;
     }
@@ -33,7 +41,9 @@
 
 .auth-form {
     width: auto;
-    background-color: variables.$block_color;
+    @include mixins.themify(variables.$themes) {
+        background-color: mixins.themed("colorPrimary");
+    }
     padding: 1rem;
     border-radius: 16px;
 }

@@ -18,6 +18,8 @@ import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import FormInput from "components/shared/Entity/FormInput";
 import { LoadingButton } from "@mui/lab";
 import { useEffect } from "react";
+import { toast } from "react-toastify";
+import NotifyMessage from "features/notifyMessage";
 const changeEmailSchema = object({
   email: string()
     .min(1, "Email address is required")
@@ -34,10 +36,18 @@ const ChangeEmail = () => {
     formState: { isSubmitSuccessful },
   } = methods;
   const user = useAppSelector((state) => state.userState.user);
-  const [updateEmail, { isLoading }] = useUpdateUserMutation();
+  const [updateEmail, { isLoading, isSuccess, isError, error }] =
+    useUpdateUserMutation();
   const onSubmitHandler: SubmitHandler<ChangeEmailInput> = (values) => {
     user && updateEmail({ username: user.username, body: values });
   };
+  NotifyMessage(
+    "You have successfully changed your email address",
+    isLoading,
+    isSuccess,
+    isError,
+    error
+  );
   useEffect(() => {
     if (isSubmitSuccessful) {
       reset();
