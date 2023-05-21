@@ -10,7 +10,7 @@ from src.utils.auth import (
     get_password_hash,
     create_refresh_token,
 )
-from src.db.schemas.user import UserIn
+from src.db.schemas.user import UserIn,UserCreate
 from tests.conftest import session_mock, mock_settings, client_app, lifespan
 from jose import jwt
 
@@ -47,7 +47,7 @@ async def test_get_token(client_app, session_mock):
         session=session_mock[1],
     )
     response = await client_app.post(
-        "/users/token",
+        "/auth/token",
         data={"username": "test", "password": "test"},
         headers={"content-type": "application/x-www-form-urlencoded"},
     )
@@ -58,12 +58,12 @@ async def test_get_token(client_app, session_mock):
 
 async def test_get_token_user_not_exist(client_app):
     response = await client_app.post(
-        "/users/token",
+        "/auth/token",
         data={"username": "test", "password": "test"},
         headers={"content-type": "application/x-www-form-urlencoded"},
     )
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    assert response.json() == {"detail": "Incorrect username or password"}
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.json() == {"detail": "user with given username does not exist"}
 
 
 async def test_get_token_wrong_password(client_app, session_mock):
@@ -76,21 +76,18 @@ async def test_get_token_wrong_password(client_app, session_mock):
         session=session_mock[1],
     )
     response = await client_app.post(
-        "/users/token",
+        "auth/token",
         data={"username": "test", "password": "wrong_test"},
         headers={"content-type": "application/x-www-form-urlencoded"},
     )
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    assert response.json() == {"detail": "Incorrect username or password"}
+    assert response.json() == {"detail": "Could not validate credentials"}
 
 
 async def test_get_me(client_app, session_mock):
+    user_data=UserCreate(username='test',email="test@mial.ru",password=get_password_hash("test"))
     await session_mock[0].test.users.insert_one(
-        {
-            "username": "test",
-            "email": "test@mial.ru",
-            "password": get_password_hash("test"),
-        },
+        user_data.dict(),
         session=session_mock[1],
     )
     token = jwt.encode(
@@ -114,12 +111,9 @@ async def test_get_me(client_app, session_mock):
 
 
 async def test_get_me_not_username(client_app, session_mock):
+    user_data=UserCreate(username='test',email="test@mial.ru",password=get_password_hash("test"))
     await session_mock[0].test.users.insert_one(
-        {
-            "username": "test",
-            "email": "test@mial.ru",
-            "password": get_password_hash("test"),
-        },
+        user_data.dict(),
         session=session_mock[1],
     )
     token = jwt.encode(
@@ -141,12 +135,9 @@ async def test_get_me_not_username(client_app, session_mock):
 
 
 async def test_get_me_jwt_error(client_app, session_mock):
+    user_data=UserCreate(username='test',email="test@mial.ru",password=get_password_hash("test"))
     await session_mock[0].test.users.insert_one(
-        {
-            "username": "test",
-            "email": "test@mial.ru",
-            "password": get_password_hash("test"),
-        },
+        user_data.dict(),
         session=session_mock[1],
     )
     response = await client_app.get(
@@ -177,22 +168,19 @@ async def test_get_me_user_not_exist(client_app):
         cookies={"access_token": f"Bearer {token}"},
     )
     assert response.status_code == status.HTTP_404_NOT_FOUND
-    assert response.json() == {"detail": "Could not validate credentials"}
+    assert response.json() == {"detail": "user with given username does not exist"}
 
 
 async def test_refresh_token(client_app, session_mock):
+    user_data=UserCreate(username='test',email="test@mial.ru",password=get_password_hash("test"))
     await session_mock[0].test.users.insert_one(
-        {
-            "username": "test",
-            "email": "test@mial.ru",
-            "password": get_password_hash("test"),
-        },
+        user_data.dict(),
         session=session_mock[1],
     )
     token = create_refresh_token(data={"sub": "test"})
 
     response = await client_app.get(
-        "/users/refresh",
+        "/auth/refresh",
         cookies={"refresh_token": f"Bearer {token}"},
     )
     assert response.status_code == status.HTTP_200_OK
@@ -211,18 +199,15 @@ async def test_refresh_token_not_send_token(client_app, session_mock):
     )
 
     response = await client_app.get(
-        "/users/refresh",
+        "/auth/refresh",
     )
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
 async def test_get_user_by_name(client_app, session_mock):
+    user_data=UserCreate(username='test',email="test@mial.ru",password=get_password_hash("test"))
     await session_mock[0].test.users.insert_one(
-        {
-            "username": "test",
-            "email": "test@mial.ru",
-            "password": get_password_hash("test"),
-        },
+       user_data.dict(),
         session=session_mock[1],
     )
     response = await client_app.get(

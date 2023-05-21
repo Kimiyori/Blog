@@ -1,3 +1,4 @@
+# pylint:disable=missing-class-docstring,dangerous-default-value
 from typing import Any
 from fastapi import status, HTTPException
 

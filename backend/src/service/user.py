@@ -10,7 +10,13 @@ from src.utils.images import (
     get_user_avatar_path,
 )
 import src.exceptions as exc
-from src.db.schemas.user import UserOut, UserIn, UserCreate, UserUpdate
+from src.db.schemas.user import (
+    UserOut,
+    UserIn,
+    UserCreate,
+    UserUpdate,
+    UserUpdateResponse,
+)
 from src.unit_of_work import uow_context_manager, MongoDBUnitOfWork
 from src.repository.user import UserRepository
 
@@ -46,9 +52,17 @@ async def get_current_user(
     ),
 ) -> UserOut:
     username = decode_token(token)
-    if (user := await uow.repo.get_by_name(username)) is None:
+    if (user := await uow.repo.get_by_name(username, return_password=False)) is None:
         raise exc.UserNotExist()
-    return UserOut(**user)
+    return UserOut(
+        username=user["username"],
+        email=user["email"],
+        _id=user["_id"],
+        created_at=user["created_at"],
+        updated_at=user["updated_at"],
+        type=user["type"],
+        image=user["image"],
+    )
 
 
 async def get_user_service(
@@ -58,8 +72,16 @@ async def get_user_service(
     ),
 ) -> UserOut:
     if (user := await uow.repo.get_by_name(username)) is None:
-        raise  
-    return UserOut(**user)
+        raise exc.UserNotExist()
+    return UserOut(
+        username=user["username"],
+        email=user["email"],
+        _id=user["_id"],
+        created_at=user["created_at"],
+        updated_at=user["updated_at"],
+        type=user["type"],
+        image=user["image"],
+    )
 
 
 async def update_user_service(
@@ -71,7 +93,7 @@ async def update_user_service(
     uow: MongoDBUnitOfWork[UserRepository] = Depends(
         uow_context_manager(UserRepository)
     ),
-) -> UserUpdate:
+) -> UserUpdateResponse:
     if user.username != username:
         raise exc.UserNotExist()
     filename = get_user_image_filename(image)
@@ -83,6 +105,11 @@ async def update_user_service(
         password=get_password_hash(password) if password else None,
     )
     updated_data = await uow.repo.update_user(user.id, upd_obj)
-    if image:
+    if image and filename:
         save_user_image(image, filename, user.username)
-    return UserUpdate(**updated_data)
+    return UserUpdateResponse(
+        username=updated_data["username"],
+        email=updated_data["email"],
+        updated_at=updated_data["updated_at"],
+        image=updated_data["image"],
+    )

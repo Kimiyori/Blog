@@ -26,7 +26,7 @@ class PostRepository(MongoDbRepository[PostBase]):
             {"_id": ObjectId(post_id)},
             {"$inc": {"views": 1}},
             return_document=ReturnDocument.AFTER,
-            session=self.session
+            session=self.session,
         )
         return post
 

@@ -41,9 +41,7 @@ class OAuth2PasswordBearerWithCookie(OAuth2):
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearerWithCookie(
-    tokenUrl="auth/token", scheme_name="JWT"
-)
+oauth2_scheme = OAuth2PasswordBearerWithCookie(tokenUrl="auth/token", scheme_name="JWT")
 
 
 def get_password_hash(password: str) -> str:

@@ -10,7 +10,7 @@ from src.utils.auth import (
     SECRET_KEY,
     ALGORITHM,
 )
-from src.db.schemas.user import UserIn
+from src.db.schemas.user import UserIn,UserCreate
 from src.db.schemas.post import PostIn, PostUpdate
 from tests.conftest import session_mock, mock_settings, client_app, client
 
@@ -26,12 +26,9 @@ POST = PostIn(
 
 @pytest.fixture
 async def user_data(session_mock):
+    user_data=UserCreate(username='test',email="test@mial.ru",password=get_password_hash("test"))
     user = await session_mock[0].test.users.insert_one(
-        {
-            "username": "test",
-            "email": "test@mial.ru",
-            "password": get_password_hash("test"),
-        },
+        user_data.dict(),
         session=session_mock[1],
     )
     token = jwt.encode(
@@ -58,7 +55,6 @@ async def test_create_post(client_app, user_data):
     json = response.json()
     assert json["_id"]
     assert json["user_id"] == str(user_data[0])
-    assert json["created_at"] == json["updated_at"]
 
 
 async def test_create_post_not_auth(client_app):

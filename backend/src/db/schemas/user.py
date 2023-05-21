@@ -23,6 +23,7 @@ class UserCreate(UserBase):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     type: UserType = UserType.user
+    image: str | None = None
 
 
 class UserOut(MongoBaseModel, UserBase):
@@ -40,8 +41,15 @@ class TokenData(BaseModel):
     username: str | None = None
 
 
-class UserUpdate(BaseModel):
+class UserUpdate(MongoBaseModel, BaseModel):
     email: str | None
     image: str | None
     password: str | None
+    updated_at: datetime = datetime.now()
+
+
+class UserUpdateResponse(MongoBaseModel, BaseModel):
+    username: str
+    email: str | None
+    image: str | None
     updated_at: datetime = datetime.now()

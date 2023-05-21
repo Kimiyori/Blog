@@ -21,7 +21,9 @@ async def authenticate_user(
         raise exc.UserNotExist()
     if not verify_password(form_data.password, user["password"]):
         raise exc.ValidateCredentials()
-    return UserIn(**user)
+    return UserIn(
+        username=user["username"], email=user["email"], password=user["password"]
+    )
 
 
 async def refresh_token_check(
@@ -33,4 +35,12 @@ async def refresh_token_check(
     username = decode_refresh_token(token)
     if (user := await uow.repo.get_by_name(username)) is None:
         raise exc.UserNotExist()
-    return UserOut(**user)
+    return UserOut(
+        username=user["username"],
+        email=user["email"],
+        _id=user["_id"],
+        created_at=user["created_at"],
+        updated_at=user["updated_at"],
+        type=user["type"],
+        image=user["image"],
+    )

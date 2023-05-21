@@ -3,6 +3,7 @@ from bson import ObjectId
 from fastapi import HTTPException
 import pytest
 from typing import Any
+from src.exceptions import UserNotExist,ValidateCredentials
 from src.service.user import (
     create_new_user,
     get_current_user,
@@ -11,7 +12,7 @@ from src.service.auth import authenticate_user
 from src.utils.auth import ALGORITHM,SECRET_KEY,get_password_hash
 from src.utils.auth import create_access_token
 from jose import jwt
-from src.db.schemas.user import UserIn
+from src.db.schemas.user import UserIn,UserCreate
 from src.repository.abc import AbstractRepository, T
 from src.unit_of_work import AbstractUnitOfWork
 
@@ -33,7 +34,7 @@ class FakeRepository(AbstractRepository[T]):
         except StopIteration:
             return None
 
-    async def get_by_name(self, name):
+    async def get_by_name(self, name,return_password=True):
         if (user := self.get(name)) is not None:
             return user
 
@@ -89,16 +90,16 @@ async def test_create_user_already_exist(uow):
 
 @pytest.mark.asyncio
 async def test_auth_user_not_exist_user(uow):
-    auth = await authenticate_user(USER, uow)
-    assert auth == False
+    with pytest.raises(UserNotExist):
+        await authenticate_user(USER, uow)
 
 
 @pytest.mark.asyncio
 async def test_auth_user_wrong_pass(uow):
     await uow.repo.add(dict(USER))
     USER.password = "wrong_pass"
-    auth = await authenticate_user(USER, uow)
-    assert auth == False
+    with pytest.raises(ValidateCredentials):
+        await authenticate_user(USER, uow)
 
 
 @pytest.mark.asyncio
@@ -116,16 +117,15 @@ async def test_auth_user(uow):
 
 @pytest.mark.asyncio
 async def test_get_current_user(uow):
+    user_data=UserCreate(username='test',email="test@mial.ru",password=get_password_hash("test"))
+    user_data_dict=user_data.dict()
+    user_data_dict["_id"]=ObjectId()
     await uow.repo.add(
-        {
-            "_id": ObjectId(),
-            "username": USER.username,
-            "email": USER.email,
-            "password": get_password_hash(USER.password),
-        }
+        user_data_dict
     )
+
     token = jwt.encode(
-        {"sub": USER.username, "exp": datetime.utcnow() + timedelta(minutes=30)},
+        {"sub": user_data_dict['username'], "exp": datetime.utcnow() + timedelta(minutes=30)},
         SECRET_KEY,
         algorithm=ALGORITHM,
     )
