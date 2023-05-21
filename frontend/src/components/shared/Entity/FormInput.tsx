@@ -1,6 +1,5 @@
 import {
   FormHelperText,
-  Typography,
   FormControl,
   Input,
   InputProps,
@@ -27,10 +26,12 @@ const FormInput: FC<IFormInputProps> = ({ name, label, ...otherProps }) => {
       name={name}
       render={({ field }) => (
         <FormControl fullWidth sx={{ mb: 2 }}>
-          <FormLabel sx={{ mb: 1, fontWeight: 500 }}>{label}</FormLabel>
+          <FormLabel htmlFor={name} sx={{ mb: 1, fontWeight: 500 }}>
+            {label}
+          </FormLabel>
           <Input
             {...field}
-            inputProps={{ 'data-testid':"auth-data-input" }}
+            inputProps={{ "data-testid": "auth-data-input", id: name }}
             fullWidth
             className="form-input"
             disableUnderline

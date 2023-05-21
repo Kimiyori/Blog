@@ -158,12 +158,13 @@ describe("callbacks", () => {
     // Disable API mocking after the tests are done.
     afterAll(() => server.close());
     test("successful sign in", async () => {
-      renderWithProviders(
+      const { store } = renderWithProviders(
         <Router>
           <ToastContainer />
           <LoginPage />
         </Router>
       );
+      expect(store.getState().userState.user).toBe(null);
       const inputs = screen.getAllByTestId(
         "auth-data-input"
       ) as HTMLInputElement[];
@@ -176,6 +177,11 @@ describe("callbacks", () => {
       expect(
         await screen.findByText("You successfully logged in")
       ).toBeInTheDocument();
+      await waitFor(() =>
+        expect(store.getState().userState.user).toStrictEqual({
+          username: USER_DATA["username"],
+        })
+      );
     });
     test("server error", async () => {
       server.use(

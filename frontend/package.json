@@ -58,6 +58,7 @@
     ]
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.0.1",
     "@types/react-router-dom": "^5.3.3",
     "msw": "^1.2.1"
   }

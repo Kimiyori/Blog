@@ -6,8 +6,6 @@ import FormInput from "components/shared/Entity/FormInput";
 import { useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
-import React from "react";
-import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useLoginUserMutation } from "api/authApi";
 import "styles/pages/auth.scss";
