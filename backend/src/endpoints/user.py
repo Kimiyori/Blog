@@ -48,7 +48,7 @@ async def get_user(user: UserOut = Depends(get_user_service)) -> UserOut:
 
 
 @router.patch(
-    "/{username}",
+    "",
 )
 async def put_user(
     updated_data: UserUpdate = Depends(update_user_service),

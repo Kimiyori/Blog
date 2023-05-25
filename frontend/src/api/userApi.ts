@@ -1,10 +1,14 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { setUser } from "../features/userSlice";
+import { setUser, updateUser } from "../features/userSlice";
 import { IUser, IGenericResponse } from "features/userSlice";
 import { RegisterInput } from "pages/Register/Register.page";
 import customFetchBase from "./customFetchBase";
 
-export type UpdateUser = { image?: File; email?: string; password?: string };
+export type UpdateUserData = {
+  image?: File | string;
+  email?: string;
+  password?: string;
+};
 type UpdateUserResponse = { image?: string; email?: string };
 export const userApi = createApi({
   reducerPath: "userApi",
@@ -43,21 +47,32 @@ export const userApi = createApi({
       },
     }),
     updateUser: builder.mutation<
-      UpdateUserResponse,
-      { username: string; body: UpdateUser }
+      Omit<IUser, "createdAt" | "_id" | "type">,
+      {
+        userData?: UpdateUserData;
+        userImage?: Pick<UpdateUserData, "image">;
+      }
     >({
-      query({ username, body }) {
-        let form = new FormData();
-        body.image &&
-          form.append("image", body.image as File, body?.image?.name as string);
-        body.password && form.append("password", body.password as string);
-        body.email && form.append("email", body.email as string);
+      query({ userData, userImage }) {
+        // const formData = new FormData();
+        // userImage &&
+        //   userImage.image &&
+        //   formData.append("user_image", userImage.image, userImage.image.name);
+        // userData && formData.append("user_data", JSON.stringify(userData));
         return {
-          url: `users/${username}`,
+          url: `users`,
           method: "PATCH",
-          body: form,
+          body: JSON.stringify({user_data:userData}),
           credentials: "include",
         };
+      },
+      async onQueryStarted(args, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(updateUser(data));
+        } catch (error) {
+          console.log(error);
+        }
       },
     }),
   }),

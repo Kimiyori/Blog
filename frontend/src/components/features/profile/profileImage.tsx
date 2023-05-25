@@ -6,12 +6,16 @@ import { useAppSelector } from "app/store";
 import { useUpdateUserMutation } from "api/userApi";
 import FullScreenLoader from "../../core/FullScreenLoader";
 import { useParams } from "react-router-dom";
+import { blobToData } from "utils/imageConverttoBase";
+import NotifyMessage from "features/notifyMessage";
+
 const ProfileImage = ({ img }: { img: string }) => {
   const { username } = useParams();
   const [profileImage, setProfileImage] = useState(img);
   const [isHovering, setIsHovering] = useState(false);
   const user = useAppSelector((state) => state.userState.user);
-  const [updateImage, { isLoading }] = useUpdateUserMutation();
+  const [updateImage, { isLoading, isSuccess, isError, error }] =
+    useUpdateUserMutation();
   const handleMouseOver = () => {
     setIsHovering(true);
   };
@@ -20,15 +24,22 @@ const ProfileImage = ({ img }: { img: string }) => {
   };
   const uploadImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event?.target?.files?.[0] as File;
+    const imageBase64 = await blobToData(file);
     const data = await updateImage({
-      username: user?.username as string,
-      body: { image: file },
+      userData: { image: imageBase64 as string },
     });
     if ("data" in data) {
-      setProfileImage(data?.data?.image as string);
+      setProfileImage(data.data?.image as string);
     }
     handleMouseOut();
   };
+  NotifyMessage(
+    "You have successfully updated your profile image",
+    isLoading,
+    isSuccess,
+    isError,
+    error
+  );
   return (
     <>
       <div
@@ -46,6 +57,7 @@ const ProfileImage = ({ img }: { img: string }) => {
               id="icon-button-file"
               type="file"
               style={{ display: "none" }}
+              data-testid="profile_image_upload"
             />
             <IconButton
               color="primary"
@@ -60,6 +72,7 @@ const ProfileImage = ({ img }: { img: string }) => {
         )}
         {isLoading && <FullScreenLoader />}
         <Avatar
+          alt="User profile avatar"
           src={"http://127.0.0.1:81/files/" + profileImage}
           className="profile-image-img"
         ></Avatar>

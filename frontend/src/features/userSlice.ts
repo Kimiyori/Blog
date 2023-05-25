@@ -3,8 +3,8 @@ export interface IUser {
   username: string;
   email: string | null;
   _id: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: Date | string;
+  updatedAt: Date | string;
   type: string;
   image: string;
 }
@@ -27,13 +27,17 @@ export const userSlice = createSlice({
   name: "userSlice",
   reducers: {
     logout: () => {
-      return initialState},
+      return initialState;
+    },
     setUser: (state, action: PayloadAction<IUser>) => {
       state.user = action.payload;
+    },
+    updateUser: (state, action: PayloadAction<Partial<IUser>>) => {
+      state.user = Object.assign({}, state.user, action.payload);
     },
   },
 });
 
 export default userSlice.reducer;
 
-export const { logout, setUser } = userSlice.actions;
+export const { logout, setUser, updateUser } = userSlice.actions;

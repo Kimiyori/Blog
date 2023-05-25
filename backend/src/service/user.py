@@ -1,4 +1,7 @@
-from fastapi import Depends, Form, UploadFile
+import base64
+import json
+from fastapi import Body, Depends, File, Form, UploadFile
+from pydantic import BaseModel
 from src.utils.auth import (
     get_password_hash,
     oauth2_scheme,
@@ -84,29 +87,44 @@ async def get_user_service(
     )
 
 
+class UserData(BaseModel):
+    username: str | None
+    email: str | None
+    password: str | None
+    image: str | None
+
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate_to_json
+
+    @classmethod
+    def validate_to_json(cls, value):
+        if isinstance(value, str):
+            return cls(**json.loads(value))
+        return value
+
+
 async def update_user_service(
-    username: str,
-    image: UploadFile | None = None,
-    email: str = Form(None),
-    password: str = Form(None),
+    user_data: UserData,
     user: UserOut = Depends(get_current_user),
     uow: MongoDBUnitOfWork[UserRepository] = Depends(
         uow_context_manager(UserRepository)
     ),
 ) -> UserUpdateResponse:
-    if user.username != username:
-        raise exc.UserNotExist()
-    filename = get_user_image_filename(image)
+    json_data: dict[str, dict[str, str | None]] = json.loads(user_data)
+    if json_data["user_data"].get('image'):
+        image = base64.b64decode((json_data["user_data"]["image"]))
+        filename = get_user_image_filename(image)
+        save_user_image(image, filename, user.username)
+
     upd_obj = UserUpdate(
-        email=email if email else None,
+        email=json_data["user_data"].get("email"),
         image=get_user_avatar_path(user.username) + "/" + filename
-        if filename
+        if json_data["user_data"].get('image')
         else None,
-        password=get_password_hash(password) if password else None,
+        password=json_data["user_data"].get("password"),
     )
     updated_data = await uow.repo.update_user(user.id, upd_obj)
-    if image and filename:
-        save_user_image(image, filename, user.username)
     return UserUpdateResponse(
         username=updated_data["username"],
         email=updated_data["email"],

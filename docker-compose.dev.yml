@@ -9,3 +9,17 @@ services:
     build: ./backend
     command: bash -c "mypy src ; pylint src ; flake8 src"
     working_dir: /backend
+  test_frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    command:  bash -c " npm run test-exit"
+    volumes:
+      - ./frontend:/frontend:delegated
+      - /frontend/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+      - REACT_APP_BACKEND_URL=http://127.0.0.1:81
+    ports:
+      - 3000:3000

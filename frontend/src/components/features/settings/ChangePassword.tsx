@@ -1,17 +1,6 @@
 import { useAppSelector } from "app/store";
-import {
-  useGetUserQuery,
-  useUpdateUserMutation,
-  UpdateUser,
-} from "api/userApi";
-import {
-  Box,
-  Button,
-  Divider,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { useUpdateUserMutation } from "api/userApi";
+import { Box, Divider, Typography } from "@mui/material";
 import { object, string, TypeOf } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
@@ -40,11 +29,12 @@ const ChangePassword = () => {
     formState: { isSubmitSuccessful },
   } = methods;
   const user = useAppSelector((state) => state.userState.user);
-  const [updatePassword, { isLoading, isSuccess, isError, error }] = useUpdateUserMutation();
+  const [updatePassword, { isLoading, isSuccess, isError, error }] =
+    useUpdateUserMutation();
   const onSubmitHandler: SubmitHandler<
     Omit<ChangePasswordInput, "passwordConfirm">
   > = (values) => {
-    user && updatePassword({ username: user.username, body: values });
+    user && updatePassword({ userData: values });
   };
   NotifyMessage(
     "You have successfully changed your password",
@@ -53,7 +43,7 @@ const ChangePassword = () => {
     isError,
     error
   );
-  useEffect(() => { 
+  useEffect(() => {
     if (isSubmitSuccessful) {
       reset();
     }

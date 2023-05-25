@@ -1,24 +1,12 @@
 import { useAppSelector } from "app/store";
-import {
-  useGetUserQuery,
-  useUpdateUserMutation,
-  UpdateUser,
-} from "api/userApi";
-import {
-  Box,
-  Button,
-  Divider,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { useUpdateUserMutation } from "api/userApi";
+import { Box, Divider, Typography } from "@mui/material";
 import { object, string, TypeOf } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import FormInput from "components/shared/Entity/FormInput";
 import { LoadingButton } from "@mui/lab";
 import { useEffect } from "react";
-import { toast } from "react-toastify";
 import NotifyMessage from "features/notifyMessage";
 const changeEmailSchema = object({
   email: string()
@@ -26,6 +14,8 @@ const changeEmailSchema = object({
     .email("Email Address is invalid"),
 });
 export type ChangeEmailInput = TypeOf<typeof changeEmailSchema>;
+
+
 const ChangeEmail = () => {
   const methods = useForm<ChangeEmailInput>({
     resolver: zodResolver(changeEmailSchema),
@@ -39,7 +29,7 @@ const ChangeEmail = () => {
   const [updateEmail, { isLoading, isSuccess, isError, error }] =
     useUpdateUserMutation();
   const onSubmitHandler: SubmitHandler<ChangeEmailInput> = (values) => {
-    user && updateEmail({ username: user.username, body: values });
+    user && updateEmail({ userData: values });
   };
   NotifyMessage(
     "You have successfully changed your email address",
