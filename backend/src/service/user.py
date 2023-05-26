@@ -1,6 +1,6 @@
 import base64
 import json
-from fastapi import Body, Depends, File, Form, UploadFile
+from fastapi import Depends
 from pydantic import BaseModel
 from src.utils.auth import (
     get_password_hash,
@@ -112,7 +112,7 @@ async def update_user_service(
     ),
 ) -> UserUpdateResponse:
     json_data: dict[str, dict[str, str | None]] = json.loads(user_data)
-    if json_data["user_data"].get('image'):
+    if json_data["user_data"].get("image"):
         image = base64.b64decode((json_data["user_data"]["image"]))
         filename = get_user_image_filename(image)
         save_user_image(image, filename, user.username)
@@ -120,7 +120,7 @@ async def update_user_service(
     upd_obj = UserUpdate(
         email=json_data["user_data"].get("email"),
         image=get_user_avatar_path(user.username) + "/" + filename
-        if json_data["user_data"].get('image')
+        if json_data["user_data"].get("image")
         else None,
         password=json_data["user_data"].get("password"),
     )

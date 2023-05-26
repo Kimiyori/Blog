@@ -57,15 +57,15 @@ async def test_create_post(client_app, user_data):
     assert json["user_id"] == str(user_data[0])
 
 
-# async def test_create_post_not_auth(client_app):
-#     response = await client_app.post(
-#         "/post",
-#         data=POST.json(),
-#         headers={
-#             "Content-Type": "application/json",
-#         },
-#     )
-#     assert response.status_code == status.HTTP_401_UNAUTHORIZED
+async def test_create_post_not_auth(client_app):
+    response = await client_app.post(
+        "/post",
+        data=POST.json(),
+        headers={
+            "Content-Type": "application/json",
+        },
+    )
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
 async def test_create_post_wrong_content_types(client_app, user_data):

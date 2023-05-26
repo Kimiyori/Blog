@@ -1,6 +1,7 @@
 # pylint: disable=redefined-outer-name
 import asyncio
 from contextlib import asynccontextmanager
+import time
 from unittest import mock
 import pytest
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -50,6 +51,7 @@ def client(mock_settings):
 
 @pytest.fixture
 async def session_mock(client, mock_settings):
+    time.sleep(1)
     try:
         async with await client.start_session() as session:
             async with session.start_transaction():
@@ -79,6 +81,7 @@ async def lifespan(mock_settings, client):
 
 @pytest.fixture
 async def client_app(session_wrapper, lifespan) -> AsyncClient:
+    time.sleep(1)
     app = create_app(lifespan)
     app.dependency_overrides[async_mongo_session] = session_wrapper
     async with LifespanManager(app):

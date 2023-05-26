@@ -27,4 +27,5 @@ jobs:
         - uses: actions/checkout@v2
         - name: Run backend tests
           run: |
+            echo "${{ secrets.ENV_FILE }}" > backend/.env
             docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --exit-code-from test_frontend test_frontend
