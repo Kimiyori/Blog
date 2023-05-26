@@ -1,4 +1,10 @@
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import FormInput from "../FormInput";
 import { FormProvider, useForm } from "react-hook-form";
 import userEvent from "@testing-library/user-event";
@@ -40,12 +46,11 @@ describe("rendering", () => {
     );
     const input = screen.getByLabelText(/Username/i) as HTMLInputElement;
     fireEvent.input(input, {
-        target: {
-          value: "test_input"
-        }
-      });
+      target: {
+        value: "test_input",
+      },
+    });
     // await userEvent.type(input, "test_input");
-      expect(input).toHaveValue("test_input");
-  
+    expect(input).toHaveValue("test_input");
   });
 });

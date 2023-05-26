@@ -31,7 +31,9 @@ describe("rendering", () => {
   test("initial state", async () => {
     render(<TestAnonUserMenu />);
     expect(screen.getByRole("menu", { hidden: true })).toBeInTheDocument();
-    expect(screen.getByRole("presentation", { hidden: true })).toHaveClass('MuiModal-hidden');
+    expect(screen.getByRole("presentation", { hidden: true })).toHaveClass(
+      "MuiModal-hidden"
+    );
     expect(screen.getByText(/Sign Up/i)).toBeInTheDocument();
     expect(screen.getByText(/Sign In/i)).toBeInTheDocument();
     expect(screen.getAllByRole("menuitem", { hidden: true }).length).toBe(2);
@@ -39,7 +41,9 @@ describe("rendering", () => {
   test("state acter trigger menu", async () => {
     render(<TestAnonUserMenu />);
     fireEvent.click(screen.getByText(/Trigger Button/i));
-    expect(screen.queryByRole("presentation", { hidden: true })).not.toHaveClass('MuiModal-hidden');
+    expect(
+      screen.queryByRole("presentation", { hidden: true })
+    ).not.toHaveClass("MuiModal-hidden");
   });
 });
 describe("callbacks", () => {
@@ -47,12 +51,16 @@ describe("callbacks", () => {
     render(<TestAnonUserMenu />);
     fireEvent.click(screen.getByText(/Sign In/i));
     await waitFor(() => expect(mockedUsedNavigate).toHaveBeenCalledTimes(1));
-    await waitFor(() => expect(mockedUsedNavigate).toHaveBeenCalledWith("/login"));
+    await waitFor(() =>
+      expect(mockedUsedNavigate).toHaveBeenCalledWith("/login")
+    );
   });
   test("click to 'sign up' link", async () => {
     render(<TestAnonUserMenu />);
     fireEvent.click(screen.getByText(/Sign Up/i));
     await waitFor(() => expect(mockedUsedNavigate).toHaveBeenCalledTimes(1));
-    await waitFor(() => expect(mockedUsedNavigate).toHaveBeenCalledWith("/register"));
+    await waitFor(() =>
+      expect(mockedUsedNavigate).toHaveBeenCalledWith("/register")
+    );
   });
 });

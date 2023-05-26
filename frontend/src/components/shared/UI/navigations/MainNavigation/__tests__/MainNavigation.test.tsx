@@ -1,8 +1,5 @@
 import { screen } from "@testing-library/react";
-import {
-  createRandomUser,
-  renderWithProviders,
-} from "utils/test-utils";
+import { createRandomUser, renderWithProviders } from "utils/test-utils";
 import Navbar from "../MainNavigation";
 
 const mockedUsedNavigate = jest.fn();

@@ -36,7 +36,7 @@ export function createRandomUser(): IUser {
     image: faker.image.avatar(),
     email: faker.internet.email(),
     username: faker.internet.userName(),
-    createdAt:  faker.date.anytime().toJSON(),
+    createdAt: faker.date.anytime().toJSON(),
     updatedAt: faker.date.anytime().toJSON(),
     type: faker.helpers.arrayElement(["admin", "user"]),
   };

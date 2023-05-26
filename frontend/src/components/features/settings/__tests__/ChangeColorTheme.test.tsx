@@ -33,7 +33,7 @@ export default global.matchMedia =
       dispatchEvent: jest.fn(),
     };
   };
-const {  setItemMock } = mockLocalStorage();
+const { setItemMock } = mockLocalStorage();
 describe("rendering", () => {
   test("correct rendering", async () => {
     render(<ChangeColorTheme />);
@@ -42,7 +42,7 @@ describe("rendering", () => {
   });
   test("initial state", async () => {
     render(<ChangeColorTheme />);
-    expect(screen.queryByRole("checkbox")).not.toBeChecked()
+    expect(screen.queryByRole("checkbox")).not.toBeChecked();
   });
 });
 describe("callbacks", () => {
@@ -54,7 +54,7 @@ describe("callbacks", () => {
     );
     await userEvent.click(screen.getByRole("checkbox"));
     expect(screen.getByRole("checkbox")).toBeChecked();
-    expect(setItemMock).toHaveBeenCalledWith("default-theme", 'dark');
+    expect(setItemMock).toHaveBeenCalledWith("default-theme", "dark");
   });
   test("switch checkbox from dark to light", async () => {
     render(
@@ -64,7 +64,7 @@ describe("callbacks", () => {
     );
     await userEvent.click(screen.getByRole("checkbox"));
     await userEvent.click(screen.getByRole("checkbox"));
-    expect(screen.queryByRole("checkbox")).not.toBeChecked()
-    expect(setItemMock).toHaveBeenCalledWith("default-theme", 'light');
+    expect(screen.queryByRole("checkbox")).not.toBeChecked();
+    expect(setItemMock).toHaveBeenCalledWith("default-theme", "light");
   });
 });

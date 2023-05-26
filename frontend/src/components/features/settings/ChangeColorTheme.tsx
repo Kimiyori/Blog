@@ -18,7 +18,7 @@ const ChangeColorTheme = () => {
           <Switch
             checked={theme === "dark"}
             onChange={handleThemeChange}
-            inputProps={{ "aria-label": "controlled"  }}
+            inputProps={{ "aria-label": "controlled" }}
           />
         </Box>
       </Box>

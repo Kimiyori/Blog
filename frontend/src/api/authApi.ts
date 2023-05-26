@@ -13,7 +13,7 @@ export const authApi = createApi({
       LoginInput
     >({
       query(data) {
-        let form = new FormData();
+        const form = new FormData();
         form.append("username", data.username);
         form.append("password", data.password);
         return {
@@ -23,17 +23,15 @@ export const authApi = createApi({
             Accept: "application/json",
             "Content-Type": "application/x-www-form-urlencoded",
           },
-          body: new URLSearchParams(form as any),
+          body: new URLSearchParams(form as any), // eslint-disable-line
           credentials: "include",
         };
       },
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
-        try {
-          await queryFulfilled;
-          await dispatch(
-            userApi.endpoints.getMe.initiate(null, { forceRefetch: true })
-          );
-        } catch (error) {}
+        await queryFulfilled;
+        await dispatch(
+          userApi.endpoints.getMe.initiate(null, { forceRefetch: true })
+        );
       },
     }),
     logoutUser: builder.mutation<void, void>({
@@ -44,10 +42,8 @@ export const authApi = createApi({
         };
       },
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
-        try {
-          await queryFulfilled;
-          dispatch(logout());
-        } catch (error) {}
+        await queryFulfilled;
+        dispatch(logout());
       },
     }),
   }),

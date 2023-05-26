@@ -22,7 +22,7 @@ export default function AuthUserMenu({
     if (isSuccess) {
       navigate("/");
     }
-  }, [isSuccess,navigate]);
+  }, [isSuccess, navigate]);
   return (
     <>
       <Menu

@@ -15,7 +15,6 @@ const changeEmailSchema = object({
 });
 export type ChangeEmailInput = TypeOf<typeof changeEmailSchema>;
 
-
 const ChangeEmail = () => {
   const methods = useForm<ChangeEmailInput>({
     resolver: zodResolver(changeEmailSchema),

@@ -9,7 +9,6 @@ export type UpdateUserData = {
   email?: string;
   password?: string;
 };
-type UpdateUserResponse = { image?: string; email?: string };
 export const userApi = createApi({
   reducerPath: "userApi",
   baseQuery: customFetchBase,
@@ -17,7 +16,7 @@ export const userApi = createApi({
   endpoints: (builder) => ({
     registerUser: builder.mutation<IGenericResponse, RegisterInput>({
       query(data) {
-        const { passwordConfirm, ...body } = data;
+        const { passwordConfirm, ...body } = data; // eslint-disable-line
         return {
           url: "users",
           method: "POST",
@@ -33,10 +32,8 @@ export const userApi = createApi({
         };
       },
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-          dispatch(setUser(data));
-        } catch (error) {}
+        const { data } = await queryFulfilled;
+        dispatch(setUser(data));
       },
     }),
     getUser: builder.query<IUser, string>({
@@ -48,12 +45,9 @@ export const userApi = createApi({
     }),
     updateUser: builder.mutation<
       Omit<IUser, "createdAt" | "_id" | "type">,
-      {
-        userData?: UpdateUserData;
-        userImage?: Pick<UpdateUserData, "image">;
-      }
+      { userData?: UpdateUserData }
     >({
-      query({ userData, userImage }) {
+      query({ userData }) {
         // const formData = new FormData();
         // userImage &&
         //   userImage.image &&
@@ -62,7 +56,7 @@ export const userApi = createApi({
         return {
           url: `users`,
           method: "PATCH",
-          body: JSON.stringify({user_data:userData}),
+          body: JSON.stringify({ user_data: userData }),
           credentials: "include",
         };
       },

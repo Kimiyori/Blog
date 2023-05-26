@@ -60,7 +60,7 @@ describe("callbacks", () => {
   test("fail change email due to server error", async () => {
     server.use(
       rest.patch(`${baseUrl}/users`, (req, res, ctx) => {
-        return res(ctx.status(503),ctx.json({ detail: "Server error" }));
+        return res(ctx.status(503), ctx.json({ detail: "Server error" }));
       })
     );
     renderWithProviders(
@@ -78,11 +78,6 @@ describe("callbacks", () => {
     fireEvent.change(input, { target: { value: "new_email@gmail.com" } });
     const button = screen.getByRole("button");
     fireEvent.click(button);
-    expect(
-      await screen.findByText(
-        "Server error"
-      )
-    ).toBeInTheDocument();
-
+    expect(await screen.findByText("Server error")).toBeInTheDocument();
   });
 });

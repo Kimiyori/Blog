@@ -8,7 +8,7 @@ export const ThemeContext = createContext<TypeColorTheme>({
   setTheme: (theme: "dark" | "light") => {},
 });
 
-export const ThemeProvider = ({ children }:PropsWithChildren) => {
+export const ThemeProvider = ({ children }: PropsWithChildren) => {
   const isBrowserDefaulDark = () =>
     window.matchMedia("(prefers-color-scheme: dark)").matches;
 

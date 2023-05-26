@@ -5,7 +5,7 @@ import FullScreenLoader from "components/core/FullScreenLoader";
 import { IUser } from "features/userSlice";
 
 const RequireUser = ({ allowedRoles }: { allowedRoles: string[] }) => {
-  const [cookies] = useCookies(['logged_in']);
+  const [cookies] = useCookies(["logged_in"]);
   const location = useLocation();
 
   const { isLoading, isFetching } = userApi.endpoints.getMe.useQuery(null, {
@@ -27,9 +27,9 @@ const RequireUser = ({ allowedRoles }: { allowedRoles: string[] }) => {
     allowedRoles.includes(user?.type as string) ? (
     <Outlet />
   ) : cookies.logged_in && user ? (
-    <Navigate to='/unauthorized' state={{ from: location }} replace />
+    <Navigate to="/unauthorized" state={{ from: location }} replace />
   ) : (
-    <Navigate to='/login' state={{ from: location }} replace />
+    <Navigate to="/login" state={{ from: location }} replace />
   );
 };
 

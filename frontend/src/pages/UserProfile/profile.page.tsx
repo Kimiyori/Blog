@@ -11,9 +11,7 @@ const ProfilePage = () => {
   const { username } = useParams();
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.userState.user);
-  const { data } = useGetUserQuery(
-    username as string
-  );
+  const { data } = useGetUserQuery(username as string);
   return (
     <>
       {data && (

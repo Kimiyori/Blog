@@ -17,26 +17,25 @@ const NotifyMessage = (
   const { theme } = useContext(ThemeContext);
   const notifyTime = 2000;
   const position = "bottom-right";
-  useEffect(
-    () => {
-      if (isSuccess) {
-        toast.success(capitalizeString(message), {
-          position: position,
-          autoClose: notifyTime,
-          theme: theme,
-        });
-      }
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(capitalizeString(message), {
+        position: position,
+        autoClose: notifyTime,
+        theme: theme,
+      });
+    }
 
-      if (isError) {
-        toast.error(capitalizeString((error as any).data.detail), {
+    if (isError) {
+      toast.error(
+        capitalizeString((error as { data: { detail: string } }).data.detail),
+        {
           position: position,
           autoClose: notifyTime,
           theme: theme,
-        });
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isLoading]
-  );
+        }
+      );
+    }
+  }, [isLoading]);
 };
 export default NotifyMessage;
